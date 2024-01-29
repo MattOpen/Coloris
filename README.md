@@ -1,5 +1,5 @@
 
-# Coloris
+# ColorisOpen
 
 ![Coloris in light, dark and polaroid themes](https://raw.githubusercontent.com/mdbassit/Coloris/gh-pages/images/coloris-light-dark-polaroid.jpg)
 
@@ -25,7 +25,7 @@ Convert any text input field into a color field.
 
 ### Basic usage
 
-Download the [latest version](https://github.com/MattOpen/Coloris/releases/latest), and add the script and style to your page:
+Download the [latest version](https://github.com/MattOpen/ColorisOpen/releases/latest), and add the script and style to your page:
 ```html
 <link rel="stylesheet" href="coloris.min.css"/>
 <script src="coloris.min.js"></script>
@@ -304,7 +304,7 @@ Coloris.close(true);
 
 Clone the git repo:
 ```bash
-git clone git@github.com:MattOpen/Coloris.git
+git clone git@github.com:MattOpen/ColorisOpen.git
 ```
 
 Enter the Coloris directory and install the development dependencies:
@@ -330,4 +330,4 @@ If you find a bug or would like to implement a missing feature, please create an
 ## License
 
 Copyright (c) 2021 Momo Bassit.  
-**Coloris** is licensed under the [MIT license](https://github.com/MattOpen/Coloris/blob/main/LICENSE).
+**Coloris** is licensed under the [MIT license](https://github.com/MattOpen/ColorisOpen/blob/main/LICENSE).
