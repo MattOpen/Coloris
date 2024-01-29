@@ -25,16 +25,10 @@ Convert any text input field into a color field.
 
 ### Basic usage
 
-Download the [latest version](https://github.com/mdbassit/Coloris/releases/latest), and add the script and style to your page:
+Download the [latest version](https://github.com/MattOpen/Coloris/releases/latest), and add the script and style to your page:
 ```html
 <link rel="stylesheet" href="coloris.min.css"/>
 <script src="coloris.min.js"></script>
-```
-
-Or include from a CDN (not recommended in production):
-```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/mdbassit/Coloris@latest/dist/coloris.min.css"/>
-<script src="https://cdn.jsdelivr.net/gh/mdbassit/Coloris@latest/dist/coloris.min.js"></script>
 ```
 
 Then just add the data-coloris attribute to your input fields:
@@ -310,7 +304,7 @@ Coloris.close(true);
 
 Clone the git repo:
 ```bash
-git clone git@github.com:mdbassit/Coloris.git
+git clone git@github.com:MattOpen/Coloris.git
 ```
 
 Enter the Coloris directory and install the development dependencies:
@@ -333,9 +327,7 @@ npm run start
 
 If you find a bug or would like to implement a missing feature, please create an issue first before submitting a pull request (PR).
 
-When submitting a PR, please do not include the changes to the `dist` directory in your commits.
-
 ## License
 
 Copyright (c) 2021 Momo Bassit.  
-**Coloris** is licensed under the [MIT license](https://github.com/mdbassit/Coloris/blob/main/LICENSE).
+**Coloris** is licensed under the [MIT license](https://github.com/MattOpen/Coloris/blob/main/LICENSE).
