@@ -46,7 +46,8 @@
       format: 'Color format',
       swatch: 'Color swatch',
       instruction: 'Saturation and brightness selector. Use up, down, left and right arrow keys to select.'
-    }
+    },
+    wrapNoDiv: true
   };
 
   // Virtual instances cache
@@ -113,6 +114,9 @@
           break;
         case 'wrap':
           if (options.el && options.wrap) {
+            if (options.wrapNoDiv) {
+              settings.wrapNoDiv = options.wrapNoDiv;
+            }
             wrapFields(options.el);
           }
           break;
@@ -430,18 +434,30 @@
       const parentNode = field.parentNode;
 
       if (!parentNode.classList.contains('clr-field')) {
-        const wrapper = document.createElement('div');
-        let classes = 'clr-field';
 
-        if (settings.rtl || field.classList.contains('clr-rtl')) {
-          classes += ' clr-rtl';
+        if (settings.wrapNoDiv) {
+          const wrapper = field,
+            classes = 'clr-field';
+          wrapper.insertAdjacentHTML('afterend', "<button type=\"button\" class=\"coloris-button\" aria-labelledby=\"clr-open-label\"></button>");
+          parentNode.classList.add(classes);
+          parentNode.style.color = field.value;
+        } else
+        {
+          const wrapper = document.createElement('div');
+          let classes = 'clr-field';
+
+          if (settings.rtl || field.classList.contains('clr-rtl')) {
+            classes += ' clr-rtl';
+          }
+
+          wrapper.innerHTML = "<button type=\"button\" aria-labelledby=\"clr-open-label\"></button>";
+          parentNode.insertBefore(wrapper, field);
+          wrapper.setAttribute('class', classes);
+          wrapper.style.color = field.value;
+          wrapper.appendChild(field);
         }
 
-        wrapper.innerHTML = "<button type=\"button\" aria-labelledby=\"clr-open-label\"></button>";
-        parentNode.insertBefore(wrapper, field);
-        wrapper.setAttribute('class', classes);
-        wrapper.style.color = field.value;
-        wrapper.appendChild(field);
+
       }
     });
   }

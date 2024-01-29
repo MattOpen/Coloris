@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Coloris examples</title>
-    <link rel="stylesheet" type="text/css" href="coloris.min.css">
+    <link rel="stylesheet" type="text/css" href="coloris.css">
     <style type="text/css">
     @import url(https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap);
 
@@ -21,8 +21,8 @@
     }
 
     input {
-      width: 150px;
-      height: 32px;
+      width: 100%;
+      height: 50px;
       padding: 0 10px;
       border: 1px solid #ccc;
       border-radius: 5px;
@@ -31,17 +31,7 @@
       font-weight: inherit;
       box-sizing: border-box;
     }
-      
-    .examples {
-      display: flex;
-      flex-wrap: wrap;
-    }
-
-    .example {
-      flex-shrink: 0;
-      width: 300px;
-      margin-bottom: 30px;
-    }
+    
 
     .square .clr-field button,
     .circle .clr-field button {
@@ -67,6 +57,16 @@
       border-radius: 5px;
     }
 
+    .clr-field button {
+      width: 30px;
+      height: 30px;
+      right: 6px;
+      border-radius: 5px;
+      border: 4px solid #f0f0f0;
+      position: absolute;
+      bottom: 8px;
+    }
+
     </style>
   </head>
   <body>
@@ -89,18 +89,23 @@
         <p>Full size thumbnail</p>
         <input type="text" class="coloris instance3" value="#ffcc00">
       </div>
-      <div class="example square" style="position: relative; top: 300px; padding-bottom: 30px;">
+      <div class="example square">
+        <p>Bootstrap support - prevent div wrapper</p>
+        <input type="text" class="coloris instance4" value="#48cae4">
+      </div>
+      <div class="example square" style="top: 300px;">
         <p>The dialog will appear on top of this field for lack of space under it.</p>
         <input type="text" class="coloris" value="#00a5cc">
       </div>
     </div>
-    <script type="text/javascript" src="coloris.min.js"></script>
+    <script type="text/javascript" src="coloris.js"></script>
     <script type="text/javascript">
 
     /** Default configuration **/
 
     Coloris({
       el: '.coloris',
+      wrapNoDiv: true,
       swatches: [
         '#264653',
         '#2a9d8f',
@@ -139,6 +144,11 @@
     Coloris.setInstance('.instance3', {
       theme: 'polaroid',
       swatchesOnly: true
+    });
+
+    Coloris.setInstance('.instance4', {
+      theme: 'polaroid',
+      wrapNoDiv: true
     });
 
     </script>
