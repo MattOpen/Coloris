@@ -47,7 +47,8 @@
       swatch: 'Color swatch',
       instruction: 'Saturation and brightness selector. Use up, down, left and right arrow keys to select.'
     },
-    wrapNoDiv: true
+    wrapNoDiv: true,
+    buttonStyle: 'circle'
   };
 
   // Virtual instances cache
@@ -340,6 +341,12 @@
     // Update the color preview of the input fields that match the selector
     addListener(document, 'input', selector, event => {
       const parent = event.target.parentNode;
+      const input = event.target;
+      
+      //  update button background color
+      input.nextSibling ? input.nextSibling.style.backgroundColor = event.target.value : '';
+      //  update attribute value from input
+      input.setAttribute('value', event.target.value);
 
       // Only update the preview if the field has been previously wrapped
       if (parent.classList.contains('clr-field')) {
@@ -433,32 +440,35 @@
     document.querySelectorAll(selector).forEach(field => {
       const parentNode = field.parentNode;
 
-      if (!parentNode.classList.contains('clr-field')) {
+      if(settings.wrapNoDiv){
+        const buttonstyle = settings.buttonStyle,
+              button = '<button type=\"button\" class=\"coloris-button '+ buttonstyle +' \" aria-labelledby=\"clr-open-label\"></button>',
+              classes = 'clr-field';
 
-        if(settings.wrapNoDiv){
-          const wrapper = field,
-          classes = 'clr-field';
-          wrapper.insertAdjacentHTML('afterend', "<button type=\"button\" class=\"coloris-button\" aria-labelledby=\"clr-open-label\"></button>");
-          parentNode.classList.add(classes);
-          parentNode.style.color = field.value;
-        }
-        else{
+        field.insertAdjacentHTML('afterend', button);
+        parentNode.classList.add(classes);
+        parentNode.style.color = field.value;
+        field.nextSibling.style.backgroundColor = field.value;
+      }
+
+      else{
+        if (!parentNode.classList.contains('clr-field')) {
+
           const wrapper = document.createElement('div');
           let classes = 'clr-field';
-
+  
           if (settings.rtl || field.classList.contains('clr-rtl')) {
             classes += ' clr-rtl';
           }
-
+  
           wrapper.innerHTML = `<button type="button" aria-labelledby="clr-open-label"></button>`;
           parentNode.insertBefore(wrapper, field);
           wrapper.setAttribute('class', classes);
           wrapper.style.color = field.value;
           wrapper.appendChild(field);
+          
         }
-
-        
-      }
+      } 
     });
   }
 
