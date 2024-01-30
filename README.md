@@ -330,4 +330,4 @@ If you find a bug or would like to implement a missing feature, please create an
 ## License
 
 Copyright (c) 2021 Momo Bassit.  
-**Coloris** is licensed under the [MIT license](https://github.com/MattOpen/ColorisOpen/blob/main/LICENSE).
+**Coloris** is licensed under the [MIT license](https://github.com/MattOpen/ColorisOpen/LICENSE).
