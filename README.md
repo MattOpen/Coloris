@@ -1,5 +1,12 @@
 
 # ColorisOpen
+=======
+# Coloris
+This is a fork of the great repo from mdbassit/Coloris.
+Momo did a great job. Unfortunately he will preserve his version of Coloris and will not allow further contributions.
+That was the reason for this forked repo.
+Feel free to contribute.
+
 
 ![Coloris in light, dark and polaroid themes](https://raw.githubusercontent.com/mdbassit/Coloris/gh-pages/images/coloris-light-dark-polaroid.jpg)
 
