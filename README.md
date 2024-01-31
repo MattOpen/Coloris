@@ -37,9 +37,9 @@ Download the [latest version](https://github.com/MattOpen/ColorisOpen/releases/l
 <script src="coloris.min.js"></script>
 ```
 
-Then just add the data-coloris attribute to your input fields:
+Then just add class "coloris" to your input fields:
 ```html
-<input type="text" data-coloris>
+<input type="text" class="coloris">
 ```
 
 That's it. All done!
