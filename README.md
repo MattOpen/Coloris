@@ -1,7 +1,6 @@
 
 # ColorisOpen
-=======
-# Coloris
+
 This is a fork of the great repo from mdbassit/Coloris.
 Momo did a great job. Unfortunately he will preserve his version of Coloris and will not allow further contributions.
 That was the reason for this forked repo.

@@ -1110,7 +1110,15 @@
       }
 
       // Open the color picker
-      event.target.nextElementSibling.dispatchEvent(new Event('click', { bubbles: true }));
+      if(event.target.classList.contains('coloris-button')){
+        //event.target.dispatchEvent(new Event('click', { bubbles: true }));  
+        if(event.target.previousElementSibling && event.target.previousElementSibling.classList.contains('coloris')){
+          event.target.previousElementSibling.dispatchEvent(new Event('click', { bubbles: true }));
+        }
+        else if(event.target.nextElementSibling && event.target.nextElementSibling.classList.contains('coloris')){
+          event.target.nextElementSibling.dispatchEvent(new Event('click', { bubbles: true }));
+        }
+      } 
     });
 
     addListener(colorMarker, 'keydown', event => {
