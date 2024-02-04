@@ -305,6 +305,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       randOptions['domObj'] = el;
       randOptions['colorisId'] = selector;
       Coloris['instances'][selector] = Object.assign({}, randOptions);
+      wrapField(randOptions);
+      addButtonThumbOne(randOptions);
     } else {
       document.querySelectorAll(selector).forEach(function (el) {
         randOptions['domObj'] = el;
@@ -318,8 +320,6 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       });
     }
     bindFields(randOptions.el);
-    // wrapFields(randOptions);
-    // addButtonThumb(randOptions);
   }
 
   /**
@@ -496,7 +496,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             instance[item] = element[item];
           });
         }
-        if (!instance.wrap) return;
+        //if(!instance.wrap) return;
         wrapField(instance);
       }
     }
@@ -507,9 +507,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
   * @param {string} selector One or more selectors pointing to input fields.
   */
   function wrapField(element) {
-    var instance = element;
-    if (!instance.wrap) return;
-    var field = instance.domObj,
+    var instance = element,
+      field = instance.domObj,
       parentNode = field.parentNode;
     if (!parentNode.classList.contains('clr-wrapper') && instance.wrap) {
       var wrapper = document.createElement('div');
@@ -517,9 +516,14 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       if (field.rtl || field.classList.contains('clr-rtl')) {
         classes += ' clr-rtl';
       }
-      parentNode.appendChild(wrapper);
+      removeButton(field);
       wrapper.setAttribute('class', classes);
       wrapper.appendChild(field);
+      parentNode.appendChild(wrapper);
+    } else if (parentNode.classList.contains('clr-wrapper') && !instance.wrap) {
+      //  remove wrapper div if any
+      parentNode.after(field);
+      parentNode.remove();
     }
   }
 
@@ -534,13 +538,6 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     if (field.nextElementSibling && field.nextElementSibling.classList.contains('coloris-button')) {
       field.nextElementSibling.remove();
     }
-    var parentNode = field.parentNode;
-    // if(parentNode.classList.contains('clr-wrapper')){
-    //   parentNode.remove();
-    // }
-    // else{
-    //   parentNode.classList.remove('clr-field','clr-rtl' );
-    // }
   }
 
   /**
@@ -1286,6 +1283,10 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           addButtonThumb(options);
         }
       });
+      if (options && Coloris.instances) {
+        wrapFields(options);
+        addButtonThumb(options);
+      }
     }
     var _loop3 = function _loop3(key) {
       Coloris[key] = function () {

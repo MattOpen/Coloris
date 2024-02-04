@@ -61,7 +61,7 @@
         <input type="text" class="instance3" data-coloris value="#ffcc00">
       </div>
       <div class="example square">
-        <p>Bootstrap support - prevent div wrapper</p>
+        <p>Wrapped with div</p>
         <input type="text" class="instance4" data-coloris value="#48cae4">
       </div>
       <div class="example square" style="top: 450px;">
@@ -129,10 +129,10 @@
         clearButton: false,
         buttonStyle: 'full',
         swatches: [
-        '#264653',
-        '#2a9d8f',
-        '#e9c46a'
-      ]
+          '#264653',
+          '#2a9d8f',
+          '#e9c46a'
+        ]
       });
 
       Coloris({
@@ -142,17 +142,17 @@
         closeButton: true,
         clearButton: true,
         buttonStyle: 'square button-left',
+        wrap: true,
         swatches: [
-        '#264653',
-        '#2a9d8f',
-        '#e9c46a',
-        '#f4a261'
-      ]
+          '#264653',
+          '#2a9d8f',
+          '#e9c46a',
+          '#f4a261'
+        ]
       });
 
       Coloris({
         el: '.instance5',
-        wrapNoDiv: true,
         buttonStyle: 'circle button-left'
       });
 

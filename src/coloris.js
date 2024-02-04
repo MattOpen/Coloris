@@ -275,6 +275,8 @@
       randOptions['domObj'] = el;
       randOptions['colorisId'] = selector;
       Coloris['instances'][selector] = Object.assign({}, randOptions);
+      wrapField(randOptions);
+      addButtonThumbOne(randOptions);
     }
     else{
       document.querySelectorAll(selector).forEach(el =>{
@@ -290,8 +292,6 @@
     }
 
     bindFields(randOptions.el);
-    // wrapFields(randOptions);
-    // addButtonThumb(randOptions);
   }
 
   /**
@@ -442,16 +442,16 @@
     var instancesObjArr = {};
     
     instancesObjArr = Object.fromEntries(
-      Object.entries(Coloris.instances).filter(
-        ([key, value]) => element.el == '[data-coloris]' ? value.domObj.hasAttribute(element.el.slice(1,13)) && value.el == '[data-coloris]' :
-         value.domObj.classList.contains(element.el.charAt(0) ? element.el.substring(1) : element.el)
+      Object.entries(Coloris.instances).filter(([key, value]) => 
+        element.el == '[data-coloris]' ? value.domObj.hasAttribute(element.el.slice(1,13)) && value.el == '[data-coloris]' :
+        value.domObj.classList.contains(element.el.charAt(0) ? element.el.substring(1) : element.el)
       )
     )
 
     if(Object.keys(instancesObjArr).length == 0){
       instancesObjArr = Object.fromEntries(
-        Object.entries(Coloris.instances).filter(
-          ([key, value]) => typeof(element) == 'object' ? value.domObj.classList.contains(element.el) : false
+        Object.entries(Coloris.instances).filter(([key, value]) => 
+          typeof(element) == 'object' ? value.domObj.classList.contains(element.el) : false
         )
       )
     }
@@ -475,7 +475,7 @@
             instance[item] = element[item];
           });
         }
-        if(!instance.wrap) return;
+        //if(!instance.wrap) return;
         wrapField(instance);
       }
     }
@@ -486,10 +486,8 @@
    * @param {string} selector One or more selectors pointing to input fields.
    */
   function wrapField(element) {
-    var instance = element;
-    if(!instance.wrap) return;
-
-    var field = instance.domObj,
+    var instance = element,
+        field = instance.domObj,
         parentNode = field.parentNode;
     
     if (!parentNode.classList.contains('clr-wrapper') && instance.wrap) {
@@ -500,10 +498,15 @@
       if (field.rtl || field.classList.contains('clr-rtl')) {
         classes += ' clr-rtl';
       }
-
-      parentNode.appendChild(wrapper)
+      removeButton(field);
       wrapper.setAttribute('class', classes);
       wrapper.appendChild(field);
+      parentNode.appendChild(wrapper);
+    }
+    else if(parentNode.classList.contains('clr-wrapper') && !instance.wrap){
+    //  remove wrapper div if any
+      parentNode.after(field);
+      parentNode.remove();
     }
   }
 
@@ -518,13 +521,6 @@
     if(field.nextElementSibling && field.nextElementSibling.classList.contains('coloris-button')){
       field.nextElementSibling.remove();
     }
-    const parentNode = field.parentNode;
-    // if(parentNode.classList.contains('clr-wrapper')){
-    //   parentNode.remove();
-    // }
-    // else{
-    //   parentNode.classList.remove('clr-field','clr-rtl' );
-    // }
   }
 
    /**
@@ -546,7 +542,6 @@
             instance[item] = element[item];
           });
         }
-
         addButtonThumbOne(instance);
       }
     }
@@ -1324,6 +1319,10 @@
           addButtonThumb(options);
         }
       });
+      if (options && Coloris.instances) {
+        wrapFields(options);
+        addButtonThumb(options);
+      }
     }
 
     for (const key in methods) {
