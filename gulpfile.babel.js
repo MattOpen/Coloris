@@ -1,66 +1,61 @@
-import { src, dest, parallel, series, watch } from 'gulp';
-import babel from 'gulp-babel';
-import uglify from 'gulp-uglify';
-import cleanCSS from 'gulp-clean-css';
-import rename from 'gulp-rename';
+"use strict";
+
+import gulp from "gulp";
+import uglify from "gulp-uglify";
+import babel from "gulp-babel";
 import replace from 'gulp-replace';
 import gulpSass from "gulp-sass";
 import nodeSass from "node-sass";
-import concat from 'gulp-concat';    
+import concat from 'gulp-concat';
+import rename from 'gulp-rename';
+import cleanCSS from 'gulp-clean-css';
 const transpileSass = gulpSass(nodeSass);
 
-
-
-const path = {
-  src: './src/*',
-  dist: './dist',
-  js: './src/*.js',
-  css: './dist/coloris.css',
-  scss: './src/*.scss'
-};
-
-function minifyJS() {
-  return src(path.js)
-    .pipe(babel({ retainLines: true }))
-    .pipe(replace('"use strict";', ''))
-    // Output the non-minified version
-    .pipe(dest(path.dist))
-    // Minify and rename to *.min.js
-    .pipe(uglify({
-      output: {
-        comments: /^!/
-      }
-    }))
-    .pipe(rename(function (path) {
-      path.basename += '.min';
-    }))
-    .pipe(dest(path.dist));
+const dirs = {
+    src: "src/*.js",
+    dest: "./dist",
+    scss: "src/*.scss"
 }
 
-function minifyCSS() {
-  return src(path.css)
+gulp.task("scripts", function() {
+    return gulp.src(dirs.src)
+      .pipe(babel({ presets: ['@babel/preset-env'] }))
+      .pipe(replace('"use strict";', ''))
+      //  transpile to ES5 and create JS file in destination
+      .pipe(gulp.dest(dirs.dest))
+      // Minify and rename to *.min.js
+     .pipe(uglify({
+       output: {
+         comments: /^!/
+       }
+     }))
+     .pipe(rename(function (path) {
+       path.basename += '.min';
+     }))
+     .pipe(gulp.dest(dirs.dest));
+});
+
+gulp.task("styles", function() {
+  return gulp.src(dirs.scss)
+    .pipe(transpileSass().on('error', transpileSass.logError))
+    //  transpile to CSS and create file in destination
+    .pipe(gulp.dest(dirs.dest))
+    // Minify and rename to *.min.css
     .pipe(cleanCSS())
     .pipe(rename(function (path) {
-      path.basename += '.min';
-    }))
-    .pipe(dest(path.dist));
-}
+       path.basename += '.min';
+     }))
+     .pipe(gulp.dest(dirs.dest));
+  });
 
-function watchFiles() {
-  watch(path.js, minifyJS);
-  watch(path.scss, parallel(transpileSCSS));
-  watch(path.css, parallel(minifyCSS));
-}
+gulp.task("watch", () => {
+    gulp.watch(dirs.src, ["build"]);
+    gulp.watch(dirs.scss, ["transpileSCSS"]);
+})
 
-function transpileSCSS() {
-  return src(path.scss)
-    .pipe(transpileSass().on('error', transpileSass.logError))
-    .pipe(concat('coloris.css'))
-    .pipe(dest(path.dist));
-}
+gulp.task("build", 
+  gulp.series(gulp.parallel('styles', 'scripts'))
+);
 
-export const build = parallel(minifyJS, transpileSCSS, minifyCSS);
-
-export default series(build, watchFiles);
 
 

@@ -31,30 +31,12 @@
       font-weight: inherit;
       box-sizing: border-box;
     }
-    
-
-    .square.clr-field button{
-      left: 5px;
-      right: auto;
-      border-radius: 5px;
-    }
 
     .square.clr-field input{
-      padding-left: 36px;
+      padding-left: 40px;
     }
 
-    .circle.clr-field button {
-      border-radius: 50%;
-    }
-
-    
-
-    .full.clr-field button {
-      width: 100%;
-      right: 0;
-      height: 36px;
-      bottom: 0;
-    }
+  
 
     </style>
   </head>
@@ -64,27 +46,27 @@
     <div class="examples">
       <div class="example">
         <p>Default color thumbnail</p>
-        <input type="text" class="coloris" value="green">
+        <input type="text" class="instance0" data-coloris value="green">
       </div>
       <div class="example square">
-        <p>Rounded square thumbnail</p>
-        <input type="text" class="coloris instance1" value="rgb(255, 0, 0)">
+        <p>Rounded square thumbnail left</p>
+        <input type="text" class="instance1" data-coloris value="rgb(255, 0, 0)">
       </div>
       <div class="example circle">
         <p>Circular thumbnail</p>
-        <input type="text" class="coloris instance2" value="#cc458faa">
+        <input type="text" class="instance2" data-coloris value="#cc458faa">
       </div>
       <div class="example full">
         <p>Full size thumbnail</p>
-        <input type="text" class="coloris instance3" value="#ffcc00">
+        <input type="text" class="instance3" data-coloris value="#ffcc00">
       </div>
       <div class="example square">
         <p>Bootstrap support - prevent div wrapper</p>
-        <input type="text" class="coloris instance4" value="#48cae4">
+        <input type="text" class="instance4" data-coloris value="#48cae4">
       </div>
-      <div class="example square" style="top: 300px;">
+      <div class="example square" style="top: 450px;">
         <p>The dialog will appear on top of this field for lack of space under it.</p>
-        <input type="text" class="coloris" value="#00a5cc">
+        <input type="text" class="instance5" data-coloris value="#00a5cc">
       </div>
     </div>
     <script type="text/javascript" src="coloris.js"></script>
@@ -93,9 +75,14 @@
     /** Default configuration **/
 
     Coloris({
-      el: '.coloris',
-      wrapNoDiv: false,
+      el: '[data-coloris]',
+      theme: 'polaroid',
       buttonStyle: 'circle',
+      themeMode: 'light',
+      formatToggle: true,
+      closeButton: true,
+      clearButton: false,
+      showButtonThumb:true,
       swatches: [
         '#264653',
         '#2a9d8f',
@@ -111,48 +98,66 @@
       ]
     });
 
+    
     /** Instances **/
+ 
+    (function(){
+      Coloris({
+        el: '.instance1',
+        buttonStyle: 'square button-left',
+        themeMode: 'dark',
+        theme: 'default',
+        wrap: true,
+        showButtonThumb: true
+      });
 
-    Coloris.setInstance('.instance1', {
-      theme: 'pill',
-      themeMode: 'dark',
-      formatToggle: true,
-      closeButton: true,
-      clearButton: true,
-      swatches: [
-        '#067bc2',
-        '#84bcda',
-        '#80e377',
-        '#ecc30b',
-        '#f37748',
-        '#d56062'
+      Coloris({
+        el: '.instance2',
+        buttonStyle: 'circle',
+        themeMode: 'dark',
+        theme: 'large',
+        wrap: false,
+        showButtonThumb: true
+      });
+
+      Coloris({
+        el: '.instance3',
+        theme: 'pill',
+        themeMode: 'light',
+        formatToggle: true,
+        closeButton: true,
+        clearButton: false,
+        buttonStyle: 'full',
+        swatches: [
+        '#264653',
+        '#2a9d8f',
+        '#e9c46a'
       ]
-    });
+      });
 
-    Coloris.setInstance('.instance2', { 
-      theme: 'pill',
-      formatToggle: true,
-      closeButton: true,
-      clearButton: true,
-      swatches: [
-        '#067bc2',
-        '#84bcda',
-        '#80e377',
-        '#ecc30b',
-        '#f37748',
-        '#d56062'
+      Coloris({
+        el: '.instance4',
+        theme: 'pill',
+        formatToggle: true,
+        closeButton: true,
+        clearButton: true,
+        buttonStyle: 'square button-left',
+        swatches: [
+        '#264653',
+        '#2a9d8f',
+        '#e9c46a',
+        '#f4a261'
       ]
-     });
+      });
 
-    Coloris.setInstance('.instance3', {
-      theme: 'polaroid',
-      swatchesOnly: true
-    });
+      Coloris({
+        el: '.instance5',
+        wrapNoDiv: true,
+        buttonStyle: 'circle button-left'
+      });
 
-    Coloris.setInstance('.instance4', {
-      theme: 'polaroid',
-      wrapNoDiv: true
-    });
+
+    })();
 
     </script>
   </body>

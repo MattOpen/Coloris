@@ -2,6 +2,8 @@
  * Copyright (c) 2021 Momo Bassit.
  * Licensed under the MIT License (MIT)
  * https://github.com/mdbassit/Coloris
+ * Mostly rewritten by MattOpen Feb. 2024
+ * https://github.com/MattOpen/ColorisOpen
  */
 
 ((window, document, Math, undefined) => {
@@ -18,9 +20,10 @@
     theme: 'default',
     themeMode: 'light',
     rtl: false,
-    wrap: true,
+    wrap: false,
+    showButtonThumb: true,
     margin: 2,
-    format: 'hex',
+    format: 'auto',
     formatToggle : false,
     swatches: [],
     swatchesOnly: false,
@@ -47,15 +50,21 @@
       swatch: 'Color swatch',
       instruction: 'Saturation and brightness selector. Use up, down, left and right arrow keys to select.'
     },
-    wrapNoDiv: true,
-    buttonStyle: 'circle'
+    buttonStyle: 'default',
+    swatches: [
+          '#264653'
+          // '#2a9d8f',
+          // '#e9c46a',
+          // '#f4a261',
+          // '#e76f51',
+          // '#d62828',
+          // '#023e8a',
+          // '#0077b6',
+          // '#0096c7',
+          // '#00b4d8',
+          // '#48cae4'
+        ]
   };
-
-  // Virtual instances cache
-  const instances = {};
-  let currentInstanceId = '';
-  let defaultInstance = {};
-  let hasInstance = false;
 
   /**
    * Configure the color picker.
@@ -65,20 +74,29 @@
     if (typeof options !== 'object') {
       return;
     }
+    var defaultSetting = Object.assign({}, settings);
 
-    for (const key in options) {
+    Object.keys(options).forEach(function (item) {
+      defaultSetting[item] = options[item];
+    });
+    //const unsupportedOptions = ['wrap', 'rtl', 'inline', 'defaultColor', 'a11y'];
+    // Delete unsupported options
+    //unsupportedOptions.forEach(option => delete defaultSetting[option]);
+
+    for (const key in defaultSetting) {
       switch (key) {
-        case 'el':
-          bindFields(options.el);
-          if (options.wrap !== false) {
-            wrapFields(options.el);
-          }
-          break;
+        // case 'el':
+        //   if (defaultSetting.wrap !== false) {
+        //     wrapFields(defaultSetting);
+        //   }
+        //   if (defaultSetting.showButtonThumb !== false) {
+        //     addButtonThumb(defaultSetting);
+        //   }
+        //   break;
         case 'parent':
           container = document.querySelector(options.parent);
           if (container) {
             container.appendChild(picker);
-            settings.parent = options.parent;
 
             // document.body is special
             if (container === document.body) {
@@ -87,101 +105,102 @@
           }
           break;
         case 'themeMode':
-          settings.themeMode = options.themeMode;
-          if (options.themeMode === 'auto' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            settings.themeMode = 'dark';
+          if (defaultSetting.themeMode === 'auto' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            defaultSetting.themeMode = 'dark';
           }
           // The lack of a break statement is intentional
         case 'theme':
-          if (options.theme) {
-            settings.theme = options.theme;
-          }
-
           // Set the theme and color scheme
-          picker.className = `clr-picker clr-${settings.theme} clr-${settings.themeMode}`;
+          picker.className = `clr-picker clr-${defaultSetting.theme} clr-${defaultSetting.themeMode}`;
 
           // Update the color picker's position if inline mode is in use
-          if (settings.inline) {
+          if (defaultSetting.inline) {
             updatePickerPosition();
           }
           break;
         case 'rtl':
-          settings.rtl = !!options.rtl;
-          document.querySelectorAll('.clr-field').forEach(field => field.classList.toggle('clr-rtl', settings.rtl));
+          if(defaultSetting.rtl){
+            document.querySelectorAll('.clr-field').forEach(field => 
+              field.classList.add('clr-rtl')
+            )
+          };
           break;
-        case 'margin':
-          options.margin *= 1;
-          settings.margin = !isNaN(options.margin) ? options.margin : settings.margin;
-          break;
+        // case 'margin':
+        //   options.margin *= 1;
+        //   defaultSetting.margin = !isNaN(options.margin) ? options.margin : defaultSetting.margin;
+        //   break;
         case 'wrap':
-          if (options.el && options.wrap) {
-            if(options.wrapNoDiv){
-              settings.wrapNoDiv = options.wrapNoDiv;
-            }
-            wrapFields(options.el);
+          if (defaultSetting.el && defaultSetting.wrap) {
+            wrapField(defaultSetting);
           }
           break;
+        case 'showButtonThumb':
+          if(defaultSetting.showButtonThumb){
+            addButtonThumbOne(defaultSetting);
+          }else{
+            removeButton(defaultSetting.domObj);
+          }
         case 'formatToggle':
-          settings.formatToggle = !!options.formatToggle;
-          getEl('clr-format').style.display = settings.formatToggle ? 'block' : 'none';
-          if (settings.formatToggle) {
-            settings.format = 'auto';
+          //defaultSetting.formatToggle = !!options.formatToggle;
+          getEl('clr-format').style.display = defaultSetting.formatToggle ? 'block' : 'none';
+          if (defaultSetting.formatToggle) {
+            defaultSetting.format = 'auto';
           }
           break;
         case 'swatches':
-          if (Array.isArray(options.swatches)) {
+          if (Array.isArray(defaultSetting.swatches)) {
             const swatches = [];
 
-            options.swatches.forEach((swatch, i) => {
+            defaultSetting.swatches.forEach((swatch, i) => {
               swatches.push(`<button type="button" id="clr-swatch-${i}" aria-labelledby="clr-swatch-label clr-swatch-${i}" style="color: ${swatch};">${swatch}</button>`);
             });
 
             getEl('clr-swatches').innerHTML = swatches.length ? `<div>${swatches.join('')}</div>` : '';
-            settings.swatches = options.swatches.slice();
+            //defaultSetting.swatches = options.swatches.slice();
           }
           break;
         case 'swatchesOnly':
-          settings.swatchesOnly = !!options.swatchesOnly;
-          picker.setAttribute('data-minimal', settings.swatchesOnly);
+          //defaultSetting.swatchesOnly = !!options.swatchesOnly;
+          picker.setAttribute('data-minimal', defaultSetting.swatchesOnly);
           break;
         case 'alpha':
-          settings.alpha = !!options.alpha;
-          picker.setAttribute('data-alpha', settings.alpha);
+          //defaultSetting.alpha = !!options.alpha;
+          picker.setAttribute('data-alpha', defaultSetting.alpha);
           break;
         case 'inline':
-          settings.inline = !!options.inline;
-          picker.setAttribute('data-inline', settings.inline);
+          //defaultSetting.inline = !!options.inline;
+          picker.setAttribute('data-inline', defaultSetting.inline);
 
-          if (settings.inline) {
-            const defaultColor = options.defaultColor || settings.defaultColor;
+          if (defaultSetting.inline) {
+            //const defaultColor = options.defaultColor || defaultSetting.defaultColor;
             
-            currentFormat = getColorFormatFromStr(defaultColor);
+            currentFormat = getColorFormatFromStr(defaultSetting.defaultColor);
             updatePickerPosition();
-            setColorFromStr(defaultColor);
+            setColorFromStr(defaultSetting.defaultColor);
           }
           break;
         case 'clearButton':
           // Backward compatibility
-          if (typeof options.clearButton === 'object') {
-            if (options.clearButton.label) {
-              settings.clearLabel = options.clearButton.label;
-              clearButton.innerHTML = settings.clearLabel;
+          if (typeof defaultSetting.clearButton === 'object') {
+            if (defaultSetting.clearButton.label) {
+              defaultSetting.clearLabel = defaultSetting.clearButton.label;
+              clearButton.innerHTML = defaultSetting.clearLabel;
             }
 
-            options.clearButton = options.clearButton.show;
+            defaultSetting.clearButton = defaultSetting.clearButton.show;
           }
 
-          settings.clearButton = !!options.clearButton;
-          clearButton.style.display = settings.clearButton ? 'block' : 'none';
+          //settings.clearButton = !!options.clearButton;
+          clearButton.style.display = defaultSetting.clearButton ? 'block' : 'none';
           break;
         case 'clearLabel':
-          settings.clearLabel = options.clearLabel;
-          clearButton.innerHTML = settings.clearLabel;
+          //settings.clearLabel = options.clearLabel;
+          clearButton.innerHTML = defaultSetting.clearLabel;
           break;
         case 'closeButton':
-          settings.closeButton = !!options.closeButton;
+          //defaultSetting.closeButton = !!options.closeButton;
 
-          if (settings.closeButton) {
+          if (defaultSetting.closeButton) {
             picker.insertBefore(closeButton, colorPreview);
           } else {
             colorPreview.appendChild(closeButton);
@@ -189,17 +208,17 @@
 
           break;
         case 'closeLabel':
-          settings.closeLabel = options.closeLabel;
-          closeButton.innerHTML = settings.closeLabel;
+          //defaultSetting.closeLabel = options.closeLabel;
+          closeButton.innerHTML = defaultSetting.closeLabel;
           break;
         case 'a11y':
-          const labels = options.a11y;
+          const labels = defaultSetting.a11y;
           let update = false;
 
           if (typeof labels === 'object') {
             for (const label in labels) {
-              if (labels[label] && settings.a11y[label]) {
-                settings.a11y[label] = labels[label];
+              if (labels[label] && defaultSetting.a11y[label]) {
+                defaultSetting.a11y[label] = labels[label];
                 update = true;
               }
             }
@@ -209,92 +228,79 @@
             const openLabel = getEl('clr-open-label');
             const swatchLabel = getEl('clr-swatch-label');
 
-            openLabel.innerHTML = settings.a11y.open;
-            swatchLabel.innerHTML = settings.a11y.swatch;
-            closeButton.setAttribute('aria-label', settings.a11y.close);
-            clearButton.setAttribute('aria-label', settings.a11y.clear);
-            hueSlider.setAttribute('aria-label', settings.a11y.hueSlider);
-            alphaSlider.setAttribute('aria-label', settings.a11y.alphaSlider);
-            colorValue.setAttribute('aria-label', settings.a11y.input);
-            colorArea.setAttribute('aria-label', settings.a11y.instruction);
+            openLabel.innerHTML = defaultSetting.a11y.open;
+            swatchLabel.innerHTML = defaultSetting.a11y.swatch;
+            closeButton.setAttribute('aria-label', defaultSetting.a11y.close);
+            clearButton.setAttribute('aria-label', defaultSetting.a11y.clear);
+            hueSlider.setAttribute('aria-label', defaultSetting.a11y.hueSlider);
+            alphaSlider.setAttribute('aria-label', defaultSetting.a11y.alphaSlider);
+            colorValue.setAttribute('aria-label', defaultSetting.a11y.input);
+            colorArea.setAttribute('aria-label', defaultSetting.a11y.instruction);
           }
           break;
         default:
-          settings[key] = options[key];
+          defaultSetting[key] = options[key];
       }
     }
   }
 
-  /**
-   * Add or update a virtual instance.
+   /**
+   * Add id to every input and create an instance with reference id
    * @param {String} selector The CSS selector of the elements to which the instance is attached.
    * @param {Object} options Per-instance options to apply.
    */
-  function setVirtualInstance(selector, options) {
-    if (typeof selector === 'string' && typeof options === 'object') {
-      instances[selector] = options;
-      hasInstance = true;
+  function initInstances(selector, options){
+    
+    if(Coloris && !Coloris['instances']){
+      Coloris['instances'] = {};
     }
+
+    if(options && options.el){
+      selector = options.el;
+    }
+
+    //  update settings with options initially
+    Object.keys(options).forEach(function (item) {
+      settings[item] = options[item];
+    });
+
+    var randOptions = Object.assign({}, options);
+    // const unsupportedOptions = ['wrap', 'rtl', 'inline', 'defaultColor', 'a11y'];
+    // // Delete unsupported options
+    // unsupportedOptions.forEach(option => delete randOptions[option]);
+
+    if (selector.charAt(0) === '#'){
+      var el = document.getElementById("selector");
+      el.dataset.coloris = selector;
+      randOptions['domObj'] = el;
+      randOptions['colorisId'] = selector;
+      Coloris['instances'][selector] = Object.assign({}, randOptions);
+    }
+    else{
+      document.querySelectorAll(selector).forEach(el =>{
+        randOptions['domObj'] = el;
+        var newId = el.id.length > 0 ? el.id : Math.random().toString(36).substring(2, 9);
+        el.id = newId;
+        randOptions['colorisId'] = '#' + newId;
+        Coloris['instances']['#' + newId] = Object.assign({}, randOptions);
+        el.dataset.coloris = '#' + newId;
+        wrapField(randOptions);
+        addButtonThumbOne(randOptions);
+      })
+    }
+
+    bindFields(randOptions.el);
+    // wrapFields(randOptions);
+    // addButtonThumb(randOptions);
   }
 
   /**
-   * Remove a virtual instance.
-   * @param {String} selector The CSS selector of the elements to which the instance is attached.
-   */
-  function removeVirtualInstance(selector) {
-    delete instances[selector];
-
-    if (Object.keys(instances).length === 0) {
-      hasInstance = false;
-
-      if (selector === currentInstanceId) {
-        resetVirtualInstance();
-      }
-    }
-  }
-
-  /**
-   * Attach a virtual instance to an element if it matches a selector.
+   * redrawColoris element if it matches a selector.
    * @param {Object} element Target element that will receive a virtual instance if applicable.
    */
-  function attachVirtualInstance(element) {
-    if (hasInstance) {
-      // These options can only be set globally, not per instance
-      const unsupportedOptions = ['el', 'wrap', 'rtl', 'inline', 'defaultColor', 'a11y'];
-
-      for (let selector in instances) {
-        const options = instances[selector];
-
-        // If the element matches an instance's CSS selector
-        if (element.matches(selector)) {
-          currentInstanceId = selector;
-          defaultInstance = {};
-
-          // Delete unsupported options
-          unsupportedOptions.forEach(option => delete options[option]);
-
-          // Back up the default options so we can restore them later
-          for (let option in options) {
-            defaultInstance[option] = Array.isArray(settings[option]) ? settings[option].slice() : settings[option];
-          }
-
-          // Set the instance's options
-          configure(options);
-          break;
-        }
-      }
-    }
-  }
-
-  /**
-   * Revert any per-instance options that were previously applied.
-   */
-  function resetVirtualInstance() {
-    if (Object.keys(defaultInstance).length > 0) {
-      configure(defaultInstance);
-      currentInstanceId = '';
-      defaultInstance = {};
-    }
+  function redrawColoris(element) {
+      var instance = Coloris.instances[element.dataset.coloris];
+      configure(instance);
   }
 
   /**
@@ -310,7 +316,7 @@
       }
 
       // Apply any per-instance options first
-      attachVirtualInstance(event.target);
+      redrawColoris(event.target);
 
       currentEl = event.target;
       oldColor = currentEl.value;
@@ -432,44 +438,141 @@
     };
   }
 
+  function getRelatedInstances(element){
+    var instancesObjArr = {};
+    
+    instancesObjArr = Object.fromEntries(
+      Object.entries(Coloris.instances).filter(
+        ([key, value]) => element.el == '[data-coloris]' ? value.domObj.hasAttribute(element.el.slice(1,13)) && value.el == '[data-coloris]' :
+         value.domObj.classList.contains(element.el.charAt(0) ? element.el.substring(1) : element.el)
+      )
+    )
+
+    if(Object.keys(instancesObjArr).length == 0){
+      instancesObjArr = Object.fromEntries(
+        Object.entries(Coloris.instances).filter(
+          ([key, value]) => typeof(element) == 'object' ? value.domObj.classList.contains(element.el) : false
+        )
+      )
+    }
+    return instancesObjArr;
+  }
+  
   /**
+   * Wrap multiple linked input fields in a div that adds a color preview.
+   * @param {string} selector One or more selectors pointing to input fields.
+   */
+  function wrapFields(element) {
+    const instancesObjArr = getRelatedInstances(element);
+
+    for (var key in instancesObjArr) {
+      if (instancesObjArr.hasOwnProperty(key)) {
+        
+        var instance = instancesObjArr[key];
+        //  add local settinigs
+        if(typeof(element) == 'object'){
+          Object.keys(element).forEach(function (item) {
+            instance[item] = element[item];
+          });
+        }
+        if(!instance.wrap) return;
+        wrapField(instance);
+      }
+    }
+  }
+
+    /**
    * Wrap the linked input fields in a div that adds a color preview.
    * @param {string} selector One or more selectors pointing to input fields.
    */
-  function wrapFields(selector) {
-    document.querySelectorAll(selector).forEach(field => {
-      const parentNode = field.parentNode;
+  function wrapField(element) {
+    var instance = element;
+    if(!instance.wrap) return;
 
-      if(settings.wrapNoDiv){
-        const buttonstyle = settings.buttonStyle,
-              button = '<button type=\"button\" class=\"coloris-button '+ buttonstyle +' \" aria-labelledby=\"clr-open-label\"></button>',
-              classes = 'clr-field';
+    var field = instance.domObj,
+        parentNode = field.parentNode;
+    
+    if (!parentNode.classList.contains('clr-wrapper') && instance.wrap) {
+  
+      var wrapper = document.createElement('div');
+      let classes = 'clr-field clr-wrapper';
 
-        field.insertAdjacentHTML('afterend', button);
-        parentNode.classList.add(classes);
-        parentNode.style.color = field.value;
-        field.nextSibling.style.backgroundColor = field.value;
+      if (field.rtl || field.classList.contains('clr-rtl')) {
+        classes += ' clr-rtl';
       }
 
-      else{
-        if (!parentNode.classList.contains('clr-field')) {
+      parentNode.appendChild(wrapper)
+      wrapper.setAttribute('class', classes);
+      wrapper.appendChild(field);
+    }
+  }
 
-          const wrapper = document.createElement('div');
-          let classes = 'clr-field';
-  
-          if (settings.rtl || field.classList.contains('clr-rtl')) {
-            classes += ' clr-rtl';
-          }
-  
-          wrapper.innerHTML = `<button type="button" aria-labelledby="clr-open-label"></button>`;
-          parentNode.insertBefore(wrapper, field);
-          wrapper.setAttribute('class', classes);
-          wrapper.style.color = field.value;
-          wrapper.appendChild(field);
-          
+    /**
+   * Remove single button from input field.
+   * @param {object} field dom object from input
+   */
+  function removeButton(field){
+    if(field.previousElementSibling && field.previousElementSibling.classList.contains('coloris-button')){
+      field.previousElementSibling.remove();
+    }
+    if(field.nextElementSibling && field.nextElementSibling.classList.contains('coloris-button')){
+      field.nextElementSibling.remove();
+    }
+    const parentNode = field.parentNode;
+    // if(parentNode.classList.contains('clr-wrapper')){
+    //   parentNode.remove();
+    // }
+    // else{
+    //   parentNode.classList.remove('clr-field','clr-rtl' );
+    // }
+  }
+
+   /**
+   * Bind button to multiple input fields, will show a color preview.
+   * @param {object} element settings array
+   */
+  function addButtonThumb(element){
+    const instancesObjArr = getRelatedInstances(element);
+
+    for (var key in instancesObjArr) {
+      if (instancesObjArr.hasOwnProperty(key)) {
+
+        const instance = instancesObjArr[key];
+        if(!instance.showButtonThumb) return;
+
+        //  add local settinigs
+        if(typeof(element) == 'object'){
+          Object.keys(element).forEach(function (item) {
+            instance[item] = element[item];
+          });
         }
-      } 
-    });
+
+        addButtonThumbOne(instance);
+      }
+    }
+  }
+
+   /**
+   * Bind a single button to the input field, will show the a color preview.
+   * @param {object} element settings array
+   */
+  function addButtonThumbOne(element){
+    const instance = element;
+    if(!instance.showButtonThumb) return;
+
+    //  remove previous created button if any
+    removeButton(instance.domObj);
+    const buttonstyle = instance.buttonStyle,
+          button = `<button type="button" class="coloris-button ${buttonstyle}" aria-labelledby="clr-open-label"></button>`;
+    const classes = 'clr-field';
+    if (instance.domObj.rtl || instance.domObj.classList.contains('clr-rtl')) {
+      classes += ' clr-rtl';
+    }
+
+    const parentNode = instance.domObj.parentNode;
+    instance.domObj.insertAdjacentHTML('afterend', button);
+    parentNode.classList.add(classes);
+    instance.domObj.nextSibling.style.backgroundColor = instance.domObj.value;
   }
 
   /**
@@ -502,11 +605,6 @@
 
       // Hide the picker dialog
       picker.classList.remove('clr-open');
-
-      // Reset any previously set per-instance options
-      if (hasInstance) {
-        resetVirtualInstance();
-      }
 
       // Trigger a "close" event
       prevEl.dispatchEvent(new Event('close', { bubbles: true }));
@@ -549,13 +647,16 @@
    * @return {string} The color format.
    */
   function getColorFormatFromStr(str) {
-    const format = str.substring(0, 3).toLowerCase();
+    var retval = "hex";
+    var format = "";
+    if (str) {
+        format = str.substring(0, 3).toLowerCase();
 
-    if (format === 'rgb' || format === 'hsl' ) {
-      return format;
+        if (format === 'rgb' || format === 'hsl') {
+            retval = format;
+        }
     }
-
-    return 'hex';
+    return retval;
   }
 
   /**
@@ -1000,8 +1101,10 @@
     alphaMarker = getEl('clr-alpha-marker');
 
     // Bind the picker to the default selector
-    bindFields(settings.el);
-    wrapFields(settings.el);
+    initInstances(settings.el, settings);
+    //bindFields(settings.el);
+    //wrapFields(settings);
+    //addButtonThumb(settings);
 
     addListener(picker, 'mousedown', event => {
       picker.classList.remove('clr-keyboard-nav');
@@ -1104,18 +1207,13 @@
     });
 
     addListener(document, 'click', '.clr-field button', event => {
-      // Reset any previously set per-instance options
-      if (hasInstance) {
-        resetVirtualInstance();
-      }
-
       // Open the color picker
       if(event.target.classList.contains('coloris-button')){
         //event.target.dispatchEvent(new Event('click', { bubbles: true }));  
-        if(event.target.previousElementSibling && event.target.previousElementSibling.classList.contains('coloris')){
+        if(event.target.previousElementSibling && (event.target.previousElementSibling.classList.contains('coloris') || event.target.previousElementSibling.hasAttribute("data-coloris"))){
           event.target.previousElementSibling.dispatchEvent(new Event('click', { bubbles: true }));
         }
-        else if(event.target.nextElementSibling && event.target.nextElementSibling.classList.contains('coloris')){
+        else if(event.target.nextElementSibling && (event.target.nextElementSibling.classList.contains('coloris') || event.target.nextElementSibling.hasAttribute("data-coloris"))){
           event.target.nextElementSibling.dispatchEvent(new Event('click', { bubbles: true }));
         }
       } 
@@ -1195,7 +1293,7 @@
     args = args !== undefined ? args : [];
 
     if (document.readyState !== 'loading') {
-      fn(...args);
+      //fn(...args);
     } else {
       document.addEventListener('DOMContentLoaded', () => {
         fn(...args);
@@ -1214,20 +1312,16 @@
       set: configure,
       wrap: wrapFields,
       close: closePicker,
-      setInstance: setVirtualInstance,
-      removeInstance: removeVirtualInstance,
       updatePosition: updatePickerPosition,
-      ready: DOMReady
+      ready: DOMReady,
+      redrawColoris:redrawColoris
     };
 
     function Coloris(options) {
       DOMReady(() => {
         if (options) {
-          if (typeof options === 'string') {
-            bindFields(options);
-          } else {
-            configure(options);
-          }
+          wrapFields(options);
+          addButtonThumb(options);
         }
       });
     }
