@@ -51,10 +51,11 @@ Thanks to [@melloware](https://github.com/melloware), NPM and TypeScript support
 ### Customizing the color picker
 
 The color picker can be configured by calling `Coloris()` and passing an options object to it. For example, to activate **dark** mode and disable **alpha** support, add some swatches, change button to round and left:
+
 Important: pass a selector when calling Coloris()
 
-The default selector is '[cdata-oloris]'.
-If you pass the default selector, this will overwrite the coloris default settings with your own settings.
+The default selector is '[data-coloris]'.
+If you pass the default selector, this will overwrite the coloris default settings with your own settings. Your new settings will be reflected by all instances.
 
 ```js
 Coloris({
@@ -181,7 +182,16 @@ Coloris({
   // but can be set to a custom one. The selected color and the current input field are passed to
   // the function as arguments.
   // Use in instances (described below) to perform a custom action for each instance. 
-  onChange: (color, input) => undefined
+  onChange: (color, input) => undefined,
+
+  //  renders a button next to the Coloris input. The button will show the actual color
+  showButtonThumb:true,
+
+  //  set the button style. Possible options "circle", "square", "default", "full"
+  //  except full, all buttons are aligned to the right.
+  //  add "button-left" and the button will be aligned to the left
+  buttonStyle: 'circle button-left',
+
 });
 ```
 
