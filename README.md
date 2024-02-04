@@ -37,9 +37,9 @@ Download the [latest version](https://github.com/MattOpen/ColorisOpen/releases/l
 <script src="coloris.min.js"></script>
 ```
 
-Then just add class "coloris" to your input fields:
+Then just add the data-coloris attribute to your input fields:
 ```html
-<input type="text" class="coloris">
+<input type="text" data-coloris>
 ```
 
 That's it. All done!
@@ -50,22 +50,24 @@ Thanks to [@melloware](https://github.com/melloware), NPM and TypeScript support
 
 ### Customizing the color picker
 
-The color picker can be configured by calling `Coloris()` and passing an options object to it. For example, to activate **dark** mode and disable **alpha** support:
+The color picker can be configured by calling `Coloris()` and passing an options object to it. For example, to activate **dark** mode and disable **alpha** support, add some swatches, change button to round and left:
+Important: pass a selector when calling Coloris()
+
+The default selector is '[cdata-oloris]'.
+If you pass the default selector, this will overwrite the coloris default settings with your own settings.
 
 ```js
 Coloris({
+  el: '[cdata-oloris]',
   themeMode: 'dark',
-  alpha: false
-});
-```
-
-The new options are applied at runtime and can be updated at any time and as often as needed. For instance, to re-enable alpha support when clicking on a button:
-
-```js
-document.querySelector('#mybutton').addEventListener('click', e => {
-  Coloris({
-    alpha: true
-  });
+  alpha: false,
+  clearButton: false,
+  buttonStyle: 'circle button-left',
+  swatches: [
+    '#264653',
+    '#2a9d8f',
+    '#e9c46a'
+  ]
 });
 ```
 
@@ -204,67 +206,58 @@ Coloris({
 });
 ```
 
-### Simulating multiple instances
+### initialize Coloris with your own setting and overwrite default setting
 
-Although there is only one physical instance of the color picker in the document, it is possible to simulate multiple instances, each with its own appearance and behavior, by updating the configuration at runtime. Here is an example of how to do it by manually setting configuration options in response to click events:
-
-```js
-// Regular color fields use the default light theme
-document.querySelectorAll('.color-fields').forEach(input => {
-  input.addEventListener('click', e => {
-    Coloris({
-      theme: 'default',
-      themeMode: 'light',
-    });
-  });
-});
-
-// But the special color fields use the polaroid dark theme
-document.querySelectorAll('.special-color-fields').forEach(input => {
-  input.addEventListener('click', e => {
-    Coloris({
-      theme: 'polaroid',
-      themeMode: 'dark',
-    });
-  });
-});
-```
-
-This works well and is quite versatile, but it can get a little hard to keep track of each change every "instance" makes and revert them to the default values.
-
-So as of version `0.15.0`, there is a new way to automatically manage virtual instances. This works by assigning configuration overrides to a CSS selector representing one or more color fields. Here is an example:
 
 ```js
-// Color fields that have the class "instance1" have a format toggle,
-// no alpha slider, a dark theme and custom swatches
-Coloris.setInstance('.instance1', {
-  theme: 'polaroid',
-  themeMode: 'dark',
-  alpha: false,
-  formatToggle: true,
-  swatches: [
-    '#264653',
-    '#2a9d8f',
-    '#e9c46a'
-  ]
-});
+//  !!!"setInstance" - this wont be supported any longer!!!
+Coloris.setInstance('.instance2', {...}
 
-// Fields matching the class "instance2" show color swatches only
-Coloris.setInstance('.instance2', {
-  swatchesOnly: true,
-  swatches: [
-    '#264653',
-    '#2a9d8f',
-    '#e9c46a'
-  ]
-});
+//  in case you will setup a single Color field or multiple matching a class selector
+//  use the default initialization syntax with a different selector
+
+      Coloris({
+        el: '.instance1',
+        buttonStyle: 'square button-left',
+        themeMode: 'dark',
+        theme: 'default',
+        wrap: true,
+        showButtonThumb: true
+      });
+
+      Coloris({
+        el: '.instance2',
+        buttonStyle: 'circle',
+        themeMode: 'dark',
+        theme: 'large',
+        wrap: false,
+        showButtonThumb: true
+      });
+
+      Coloris({
+        el: '.instance3',
+        theme: 'pill',
+        themeMode: 'light',
+        formatToggle: true,
+        closeButton: true,
+        clearButton: false,
+        buttonStyle: 'full',
+        swatches: [
+          '#264653',
+          '#2a9d8f',
+          '#e9c46a'
+        ]
+      });
 ```
 
 Any options that haven't been explicitly set by an instance will inherit the global values. So any common options should be set globally using the method described in the "Customizing the color picker" section above.
 
-Please note that the options `el`, `wrap`, `rtl`, `inline`, `defaultColor` and `a11y` can only be set globally and not per instance.
+Every Coloris element has its own instance.
+Instances can be found here:
 
-**N.B:** There is only one **true** instance of the color picker, so it is not possible to show multiple instances at same time.
+  "Coloris.instances"
+
+All options can now be changed per instance.
 
 ### Events
 
