@@ -457,27 +457,27 @@ input.clr-color {
     margin-top: 20px; }
 
 /** BUTTON STYLE **/
-.coloris-button.circle {
+.clr-button.clr-circle {
   border-radius: 50%;
   border: 3px solid #f0f0f0; }
-  .coloris-button.circle.button-left {
+  .clr-button.clr-circle.button-left {
     left: 5px;
     right: auto; }
 
-.coloris-button.square {
+.clr-button.clr-square {
   border-radius: 5px;
   border: 3px solid #f0f0f0; }
-  .coloris-button.square.button-left {
+  .clr-button.clr-square.button-left {
     left: 5px;
     right: auto; }
 
-.coloris-button.full {
+.clr-button.clr-full {
   width: 100%;
   right: 0;
   height: 36px;
   bottom: 0; }
 
-.coloris-button {
+.clr-button {
   width: 32px;
   height: 32px;
   right: 3px;
@@ -486,7 +486,7 @@ input.clr-color {
   position: absolute;
   bottom: 2px; }
 
-.coloris-button.default {
+.clr-button.clr-default {
   width: 22px;
   height: 34px;
   right: 1px;

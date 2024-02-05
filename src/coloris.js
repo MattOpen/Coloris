@@ -515,10 +515,10 @@
    * @param {object} field dom object from input
    */
   function removeButton(field){
-    if(field.previousElementSibling && field.previousElementSibling.classList.contains('coloris-button')){
+    if(field.previousElementSibling && field.previousElementSibling.classList.contains('clr-button')){
       field.previousElementSibling.remove();
     }
-    if(field.nextElementSibling && field.nextElementSibling.classList.contains('coloris-button')){
+    if(field.nextElementSibling && field.nextElementSibling.classList.contains('clr-button')){
       field.nextElementSibling.remove();
     }
   }
@@ -554,11 +554,11 @@
   function addButtonThumbOne(element){
     const instance = element;
     if(!instance.showButtonThumb) return;
-
+    
     //  remove previous created button if any
     removeButton(instance.domObj);
-    const buttonstyle = instance.buttonStyle,
-          button = `<button type="button" class="coloris-button ${buttonstyle}" aria-labelledby="clr-open-label"></button>`;
+    const buttonstyle = 'clr-'+ instance.buttonStyle,
+          button = `<button type="button" class="clr-button ${buttonstyle}" aria-labelledby="clr-open-label"></button>`;
     const classes = 'clr-field';
     if (instance.domObj.rtl || instance.domObj.classList.contains('clr-rtl')) {
       classes += ' clr-rtl';
@@ -1203,12 +1203,12 @@
 
     addListener(document, 'click', '.clr-field button', event => {
       // Open the color picker
-      if(event.target.classList.contains('coloris-button')){
+      if(event.target.classList.contains('clr-button')){
         //event.target.dispatchEvent(new Event('click', { bubbles: true }));  
-        if(event.target.previousElementSibling && (event.target.previousElementSibling.classList.contains('coloris') || event.target.previousElementSibling.hasAttribute("data-coloris"))){
+        if(event.target.previousElementSibling && (event.target.previousElementSibling.classList.contains('clr-button') || event.target.previousElementSibling.hasAttribute("data-coloris"))){
           event.target.previousElementSibling.dispatchEvent(new Event('click', { bubbles: true }));
         }
-        else if(event.target.nextElementSibling && (event.target.nextElementSibling.classList.contains('coloris') || event.target.nextElementSibling.hasAttribute("data-coloris"))){
+        else if(event.target.nextElementSibling && (event.target.nextElementSibling.classList.contains('clr-button') || event.target.nextElementSibling.hasAttribute("data-coloris"))){
           event.target.nextElementSibling.dispatchEvent(new Event('click', { bubbles: true }));
         }
       } 
