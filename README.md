@@ -6,8 +6,7 @@ All credits goes to Momo, he did a great job. Unfortunately he will preserve his
 That was the reason for this forked repo.
 Feel free to contribute.
 
-
-![Coloris in light, dark and polaroid themes](https://raw.githubusercontent.com/mdbassit/Coloris/gh-pages/images/coloris-light-dark-polaroid.jpg)
+![image](https://github.com/MattOpen/ColorisColorpicker/assets/4366385/e32d072d-ce6e-40d8-bfa7-31a0e1a63f82)
 
 A lightweight and elegant JavaScript color picker written in vanilla ES6.  
 Convert any text input field into a color field.
