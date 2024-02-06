@@ -26,6 +26,9 @@ Convert any text input field into a color field.
 * Touch support
 * Fully accessible
 * Works on all modern browsers (no IE support)
+* NEW since Feb 2024
+* Configure each instance separately
+* Configure with data attribute "data-config"
 
 ## Getting Started
 
@@ -43,10 +46,6 @@ Then just add the data-coloris attribute to your input fields:
 ```
 
 That's it. All done!
-
-### What about NPM and TypeScript?
-
-Thanks to [@melloware](https://github.com/melloware), NPM and TypeScript support is available in a fork of this project. Head over to [@melloware's fork](https://github.com/melloware/coloris-npm) or to their [NPM repo](https://www.npmjs.com/package/@melloware/coloris) for more information.
 
 ### Customizing the color picker
 
@@ -71,6 +70,14 @@ Coloris({
   ]
 });
 ```
+
+You can configure the color picker also by adding a data attribute like.
+All options possible.
+Options defined as data attribute will beat all other options.
+```js
+<input type="text" class="instance5" data-coloris style="background-color: transparent;" value="#00a5cc" data-config="{%22el%22:%22.instance5%22,%22buttonStyle%22:%22full-transparent%22,%22themeMode%22:%22dark%22,%22theme%22:%22default%22,%22wrap%22:true,%22showButtonThumb%22:true}">
+```
+
 
 Here is a list of all the available options:
 
