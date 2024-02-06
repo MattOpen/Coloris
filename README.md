@@ -1,8 +1,8 @@
 
-# ColorisOpen
+# ColorisColorpicker
 
 This is a fork of the great repo from mdbassit/Coloris.
-Momo did a great job. Unfortunately he will preserve his version of Coloris and will not allow further contributions.
+All credits goes to Momo, he did a great job. Unfortunately he will preserve his version of Coloris and will not allow further contributions.
 That was the reason for this forked repo.
 Feel free to contribute.
 
@@ -34,7 +34,7 @@ Convert any text input field into a color field.
 
 ### Basic usage
 
-Download the [latest version](https://github.com/MattOpen/ColorisOpen/releases/latest), and add the script and style to your page:
+Download the [latest version](https://github.com/MattOpen/ColorisColorpicker/releases/latest), and add the script and style to your page:
 ```html
 <link rel="stylesheet" href="coloris.min.css"/>
 <script src="coloris.min.js"></script>
@@ -317,7 +317,7 @@ Coloris.close(true);
 
 Clone the git repo:
 ```bash
-git clone git@github.com:MattOpen/ColorisOpen.git
+git clone git@github.com:MattOpen/ColorisColorpicker.git
 ```
 
 Enter the Coloris directory and install the development dependencies:
@@ -343,4 +343,4 @@ If you find a bug or would like to implement a missing feature, please create an
 ## License
 
 Copyright (c) 2021 Momo Bassit.  
-**Coloris** is licensed under the [MIT license](https://github.com/MattOpen/ColorisOpen/LICENSE).
+**Coloris** is licensed under the [MIT license](https://github.com/MattOpen/ColorisColorpicker/LICENSE).
