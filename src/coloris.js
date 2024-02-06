@@ -15,6 +15,7 @@
 
   // Default settings
   const settings = {
+    aaa: 'settings',
     el: '[data-coloris]',
     parent: 'body',
     theme: 'default',
@@ -68,6 +69,7 @@
 
   /**
    * Configure the color picker.
+   * also opens the color picker
    * @param {object} options Configuration options.
    */
   function configure(options) {
@@ -278,8 +280,7 @@
       getDataConfig(el, randOptions);
 
       Coloris['instances'][selector] = Object.assign({}, randOptions);
-      wrapField(randOptions);
-      addButtonThumbOne(randOptions);
+      redrawColoris(randOptions.domObj);
     }
     else{
       document.querySelectorAll(selector).forEach(el =>{
@@ -292,12 +293,10 @@
 
         Coloris['instances']['#' + newId] = Object.assign({}, randOptions);
         el.dataset.coloris = '#' + newId;
-        wrapField(randOptions);
-        addButtonThumbOne(randOptions);
+        
+        redrawColoris(randOptions.domObj);
       })
     }
-
-    bindFields(randOptions.el);
   }
 
   /**
@@ -338,8 +337,9 @@
   function bindFields(selector) {
     // Show the color picker on click on the input fields that match the selector
     addListener(document, 'click', selector, event => {
+      var instance = Coloris.instances[event.target.dataset.coloris];
       // Skip if inline mode is in use
-      if (settings.inline) {
+      if (instance.inline) {
         return;
       }
 
@@ -354,17 +354,17 @@
       updatePickerPosition();
       setColorFromStr(oldColor);
 
-      if (settings.focusInput || settings.selectInput) {
+      if (instance.focusInput || instance.selectInput) {
         colorValue.focus({ preventScroll: true });
         colorValue.setSelectionRange(currentEl.selectionStart, currentEl.selectionEnd);
       }
       
-      if (settings.selectInput) {
+      if (instance.selectInput) {
         colorValue.select();
       }
 
       // Always focus the first element when using keyboard navigation
-      if (keyboardNav || settings.swatchesOnly) {
+      if (keyboardNav || instance.swatchesOnly) {
         getFocusableElements().shift().focus();
       }
 
@@ -1126,7 +1126,7 @@
 
     // Bind the picker to the default selector
     initInstances(settings.el, settings);
-    //bindFields(settings.el);
+    bindFields(settings.el);
     //wrapFields(settings);
     //addButtonThumb(settings);
 

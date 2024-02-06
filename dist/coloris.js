@@ -54,6 +54,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
 
   // Default settings
   var settings = _defineProperty({
+    aaa: 'settings',
     el: '[data-coloris]',
     parent: 'body',
     theme: 'default',
@@ -107,6 +108,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
 
   /**
    * Configure the color picker.
+   * also opens the color picker
    * @param {object} options Configuration options.
    */
   function configure(options) {
@@ -306,8 +308,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       randOptions['colorisId'] = selector;
       getDataConfig(el, randOptions);
       Coloris['instances'][selector] = Object.assign({}, randOptions);
-      wrapField(randOptions);
-      addButtonThumbOne(randOptions);
+      redrawColoris(randOptions.domObj);
     } else {
       document.querySelectorAll(selector).forEach(function (el) {
         randOptions['domObj'] = el;
@@ -317,11 +318,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         getDataConfig(el, randOptions);
         Coloris['instances']['#' + newId] = Object.assign({}, randOptions);
         el.dataset.coloris = '#' + newId;
-        wrapField(randOptions);
-        addButtonThumbOne(randOptions);
+        redrawColoris(randOptions.domObj);
       });
     }
-    bindFields(randOptions.el);
   }
 
   /**
@@ -361,8 +360,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
   function bindFields(selector) {
     // Show the color picker on click on the input fields that match the selector
     addListener(document, 'click', selector, function (event) {
+      var instance = Coloris.instances[event.target.dataset.coloris];
       // Skip if inline mode is in use
-      if (settings.inline) {
+      if (instance.inline) {
         return;
       }
 
@@ -374,18 +374,18 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       picker.classList.add('clr-open');
       updatePickerPosition();
       setColorFromStr(oldColor);
-      if (settings.focusInput || settings.selectInput) {
+      if (instance.focusInput || instance.selectInput) {
         colorValue.focus({
           preventScroll: true
         });
         colorValue.setSelectionRange(currentEl.selectionStart, currentEl.selectionEnd);
       }
-      if (settings.selectInput) {
+      if (instance.selectInput) {
         colorValue.select();
       }
 
       // Always focus the first element when using keyboard navigation
-      if (keyboardNav || settings.swatchesOnly) {
+      if (keyboardNav || instance.swatchesOnly) {
         getFocusableElements().shift().focus();
       }
 
@@ -1099,7 +1099,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
 
     // Bind the picker to the default selector
     initInstances(settings.el, settings);
-    //bindFields(settings.el);
+    bindFields(settings.el);
     //wrapFields(settings);
     //addButtonThumb(settings);
 

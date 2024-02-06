@@ -64,9 +64,9 @@
         <p>Wrapped with div</p>
         <input type="text" class="instance4" data-coloris value="#48cae4">
       </div>
-      <div class="example fullsize transparent with data-config" style="top: 450px;">
+      <div class="example fullsize transparent with data-config" style="top: 450px;position:relative;">
         <p>The dialog will appear on top of this field for lack of space under it.</p>
-        <input type="text" class="instance5" data-coloris style="background-color: transparent;" value="#00a5cc" data-config="{%22el%22:%22.instance5%22,%22buttonStyle%22:%22full-transparent%22,%22themeMode%22:%22dark%22,%22theme%22:%22default%22,%22wrap%22:true,%22showButtonThumb%22:true}">
+        <input type="text" class="instance5" data-coloris style="background-color: transparent;" value="#00a5cc" data-config="{%22aaa%22:%22config_options%22,%22el%22:%22.instance5%22,%22buttonStyle%22:%22full-transparent%22,%22themeMode%22:%22dark%22,%22theme%22:%22default%22,%22wrap%22:true,%22showButtonThumb%22:true}">
       </div>
     </div>
     <script type="text/javascript" src="coloris.js"></script>
@@ -75,6 +75,7 @@
     /** Default configuration **/
 
     Coloris({
+      aaa: 'global_options',
       el: '[data-coloris]',
       theme: 'polaroid',
       buttonStyle: 'default',
@@ -103,6 +104,7 @@
  
     (function(){
       Coloris({
+        aaa: 'instance1_options',
         el: '.instance1',
         buttonStyle: 'square button-left',
         themeMode: 'dark',

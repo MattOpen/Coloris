@@ -1,5 +1,5 @@
 
-# ColorisColorpicker
+# ColorisColorpicker ("0.26.0")
 
 This is a fork of the great repo from mdbassit/Coloris.
 All credits goes to Momo, he did a great job. Unfortunately he will preserve his version of Coloris and will not allow further contributions.
@@ -71,9 +71,9 @@ Coloris({
 });
 ```
 
-You can configure the color picker also by adding a data attribute like.
-All options possible.
-Options defined as data attribute will beat all other options.
+You can configure the color picker also by adding a data attribute like below.
+All options were possible.
+Options defined as data attribute will overwrite the settings options, but at any time after init, you can change the instance again, by calling Coloris({...})
 ```js
 <input type="text" class="instance5" data-coloris style="background-color: transparent;" value="#00a5cc" data-config="{%22el%22:%22.instance5%22,%22buttonStyle%22:%22full-transparent%22,%22themeMode%22:%22dark%22,%22theme%22:%22default%22,%22wrap%22:true,%22showButtonThumb%22:true}">
 ```
