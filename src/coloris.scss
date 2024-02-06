@@ -636,6 +636,14 @@ input.clr-color {
   bottom: 0;
 }
 
+.clr-button.clr-full-transparent {
+  width: 100%;
+  right: 0;
+  height: 36px;
+  bottom: 0;
+  z-index: -1;
+}
+
 .clr-button {
   width: 32px;
   height: 32px;

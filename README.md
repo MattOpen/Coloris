@@ -89,10 +89,7 @@ Coloris({
 
   // The bound input fields are wrapped in a div that adds a thumbnail showing the current color
   // and a button to open the color picker (for accessibility only). If you wish to keep your
-  // fields unaltered, set this to false, in which case you will lose the color thumbnail and
-  // the accessible button (not recommended).
-  // Note: This only works if you specify a custom selector to bind the picker (option above),
-  // it doesn't work on the default [data-coloris] attribute selector.
+  // fields unaltered, set this to false and no div wrapper div will be created.
   wrap: true,
 
   // Set to true to activate basic right-to-left support.
@@ -187,7 +184,7 @@ Coloris({
   //  renders a button next to the Coloris input. The button will show the actual color
   showButtonThumb:true,
 
-  //  set the button style. Possible options "circle", "square", "default", "full"
+  //  set the button style. Possible options "circle", "square", "default", "full" and "full-transparent"
   //  except full, all buttons are aligned to the right.
   //  add "button-left" and the button will be aligned to the left
   buttonStyle: 'circle button-left',

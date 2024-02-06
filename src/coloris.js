@@ -274,6 +274,9 @@
       el.dataset.coloris = selector;
       randOptions['domObj'] = el;
       randOptions['colorisId'] = selector;
+
+      getDataConfig(el, randOptions);
+
       Coloris['instances'][selector] = Object.assign({}, randOptions);
       wrapField(randOptions);
       addButtonThumbOne(randOptions);
@@ -284,6 +287,9 @@
         var newId = el.id.length > 0 ? el.id : Math.random().toString(36).substring(2, 9);
         el.id = newId;
         randOptions['colorisId'] = '#' + newId;
+
+        getDataConfig(el, randOptions);
+
         Coloris['instances']['#' + newId] = Object.assign({}, randOptions);
         el.dataset.coloris = '#' + newId;
         wrapField(randOptions);
@@ -292,6 +298,28 @@
     }
 
     bindFields(randOptions.el);
+  }
+
+  /**
+   * if data-config attribute is defined, parse
+   * @param {Object} element Target element input
+   * @param {Object} instance settings json
+   */
+  function getDataConfig(element, instance){
+    if(element.dataset.config){
+      var config = element.dataset.config;
+      try{
+        config = JSON.parse(decodeURIComponent(config));
+      }
+      catch{
+        config = element.dataset.config;
+      }
+      if(typeof(config) == 'object'){
+        Object.keys(config).forEach(function (item) {
+          instance[item] = config[item];
+        });
+      }
+    }
   }
 
   /**
@@ -475,10 +503,11 @@
             instance[item] = element[item];
           });
         }
-        //if(!instance.wrap) return;
+
         wrapField(instance);
       }
     }
+    addButtonThumb(element);
   }
 
     /**
@@ -1316,12 +1345,12 @@
       DOMReady(() => {
         if (options) {
           wrapFields(options);
-          addButtonThumb(options);
+          //addButtonThumb(options);
         }
       });
       if (options && Coloris.instances) {
         wrapFields(options);
-        addButtonThumb(options);
+        //addButtonThumb(options);
       }
     }
 
