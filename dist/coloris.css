@@ -312,8 +312,6 @@ input.clr-color {
     overflow: hidden; }
 
 .clr-field {
-  color: unset;
-  display: inline-block;
   position: relative; }
   .clr-field input {
     margin: 0;
