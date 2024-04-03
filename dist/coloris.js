@@ -1285,18 +1285,18 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       close: closePicker,
       updatePosition: updatePickerPosition,
       ready: DOMReady,
-      redrawColoris: redrawColoris
+      redrawColoris: redrawColoris,
+      initColoris: init
     };
     function Coloris(options) {
-      DOMReady(function () {
-        if (options) {
-          wrapFields(options);
-          //addButtonThumb(options);
-        }
-      });
-      if (options && Coloris.instances) {
+      if (!options) options = {};
+      if (!Coloris.instances) {
+        var args = args !== undefined ? args : [];
+        init.apply(void 0, _toConsumableArray(args));
         wrapFields(options);
-        //addButtonThumb(options);
+      }
+      if (options && Coloris.instances && Object.getOwnPropertyNames(Coloris.instances).length >= 1) {
+        wrapFields(options);
       }
     }
     var _loop3 = function _loop3(key) {
@@ -1312,7 +1312,4 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     }
     return Coloris;
   }();
-
-  // Init the color picker when the DOM is ready
-  DOMReady(init);
 })(window, document, Math);

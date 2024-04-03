@@ -1344,19 +1344,21 @@
       close: closePicker,
       updatePosition: updatePickerPosition,
       ready: DOMReady,
-      redrawColoris:redrawColoris
+      redrawColoris:redrawColoris,
+      initColoris: init
     };
 
     function Coloris(options) {
-      DOMReady(() => {
-        if (options) {
-          wrapFields(options);
-          //addButtonThumb(options);
-        }
-      });
-      if (options && Coloris.instances) {
+      if(!options) options = {};
+      
+      if(!Coloris.instances){
+        var args = args !== undefined ? args : [];
+        init(...args);
         wrapFields(options);
-        //addButtonThumb(options);
+      }
+
+      if (options && Coloris.instances && Object.getOwnPropertyNames(Coloris.instances).length >= 1) {
+        wrapFields(options);
       }
     }
 
@@ -1368,8 +1370,5 @@
 
     return Coloris;
   })();
-
-  // Init the color picker when the DOM is ready
-  DOMReady(init);
 
 })(window, document, Math);
