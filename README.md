@@ -25,9 +25,13 @@ Convert any text input field into a color field.
 * Touch support
 * Fully accessible
 * Works on all modern browsers (no IE support)
-* NEW since Feb 2024
+
+## Features NEW since Feb 2024 (only in ColorisColorpicker)
+
 * Configure each instance separately
 * Configure with data attribute "data-config"
+* enhanced initialization process
+* works now with appended input fields after page load
 
 ## Getting Started
 
@@ -42,6 +46,11 @@ Download the [latest version](https://github.com/MattOpen/ColorisColorpicker/rel
 Then just add the data-coloris attribute to your input fields:
 ```html
 <input type="text" data-coloris>
+```
+
+Then initialize the module:
+```JavaScript
+  Coloris();
 ```
 
 That's it. All done!
