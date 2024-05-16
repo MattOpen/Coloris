@@ -417,6 +417,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       x: 0,
       y: 0
     };
+    var documentHeight = Math.max(document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight);
     if (parent) {
       parentStyle = window.getComputedStyle(parent);
       parentMarginTop = parseFloat(parentStyle.marginTop);
@@ -452,7 +453,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           left += coords.width - pickerWidth;
           reposition.left = true;
         }
-        if (top + pickerHeight - scrollY > document.documentElement.clientHeight) {
+
+        //if (top + pickerHeight - scrollY > document.documentElement.clientHeight) {
+        if (top + pickerHeight - scrollY > documentHeight) {
           if (pickerHeight + settings.margin <= coords.top) {
             top = scrollY + coords.y - pickerHeight - settings.margin;
             reposition.top = true;
