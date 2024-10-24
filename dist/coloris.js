@@ -55,7 +55,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
   // Default settings
   var settings = _defineProperty({
     el: '[data-coloris]',
-    parent: 'body',
+    parent: 'document.body',
+    //parent: event.target,
     theme: 'default',
     themeMode: 'light',
     rtl: false,
@@ -120,17 +121,19 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         //     addButtonThumb(defaultSetting);
         //   }
         //   break;
-        case 'parent':
-          container = document.querySelector(options.parent);
-          if (container) {
-            container.appendChild(picker);
+        // case 'parent':
+        //   //container = document.querySelector(options.parent);
+        //   container = event.target;
+        //   if (container) {
+        //     //container.appendChild(picker);
+        //     container.insertAdjacentElement('afterend', picker);
 
-            // document.body is special
-            if (container === document.body) {
-              container = undefined;
-            }
-          }
-          break;
+        //     // document.body is special
+        //     if (container === document.body) {
+        //       container = undefined;
+        //     }
+        //   }
+        //   break;
         case 'themeMode':
           if (defaultSetting.themeMode === 'auto' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
             defaultSetting.themeMode = 'dark';
@@ -296,7 +299,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       randOptions['colorisId'] = selector;
       getDataConfig(el, randOptions);
       Coloris['instances'][selector] = Object.assign({}, randOptions);
-      redrawColoris(randOptions.domObj);
+      //redrawColoris(randOptions.domObj);
     } else {
       document.querySelectorAll(selector).forEach(function (el) {
         randOptions['domObj'] = el;
@@ -306,7 +309,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         getDataConfig(el, randOptions);
         Coloris['instances']['#' + newId] = Object.assign({}, randOptions);
         el.dataset.coloris = '#' + newId;
-        redrawColoris(randOptions.domObj);
+
+        //redrawColoris(randOptions.domObj);
       });
     }
   }
@@ -453,9 +457,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           left += coords.width - pickerWidth;
           reposition.left = true;
         }
-
-        //if (top + pickerHeight - scrollY > document.documentElement.clientHeight) {
-        if (top + pickerHeight - scrollY > documentHeight) {
+        if (top + pickerHeight - scrollY > document.documentElement.clientHeight) {
+          //if (top + pickerHeight - scrollY > documentHeight) {
           if (pickerHeight + settings.margin <= coords.top) {
             top = scrollY + coords.y - pickerHeight - settings.margin;
             reposition.top = true;
@@ -1061,6 +1064,89 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       return "hsla(".concat(hsla.h, ", ").concat(hsla.s, "%, ").concat(hsla.l, "%, ").concat(hsla.a, ")");
     }
   }
+  var pickerTemplate = "\n    <input id=\"clr-color-value\" name=\"clr-color-value\" class=\"clr-color\" type=\"text\" value=\"\" spellcheck=\"false\" aria-label=\"".concat(settings.a11y.input, "\">\n    <div id=\"clr-color-area\" class=\"clr-gradient\" role=\"application\" aria-label=\"").concat(settings.a11y.instruction, "\">\n      <div id=\"clr-color-marker\" class=\"clr-marker\" tabindex=\"0\"></div>\n    </div>\n    <div class=\"clr-hue\">\n      <input id=\"clr-hue-slider\" name=\"clr-hue-slider\" type=\"range\" min=\"0\" max=\"360\" step=\"1\" aria-label=\"").concat(settings.a11y.hueSlider, "\">\n      <div id=\"clr-hue-marker\"></div>\n    </div>\n    <div class=\"clr-alpha\">\n      <input id=\"clr-alpha-slider\" name=\"clr-alpha-slider\" type=\"range\" min=\"0\" max=\"100\" step=\"1\" aria-label=\"").concat(settings.a11y.alphaSlider, "\">\n      <div id=\"clr-alpha-marker\"></div>\n      <span></span>\n    </div>\n    <div id=\"clr-format\" class=\"clr-format\">\n      <fieldset class=\"clr-segmented\">\n        <legend>").concat(settings.a11y.format, "</legend>\n        <input id=\"clr-f1\" type=\"radio\" name=\"clr-format\" value=\"hex\">\n        <label for=\"clr-f1\">Hex</label>\n        <input id=\"clr-f2\" type=\"radio\" name=\"clr-format\" value=\"rgb\">\n        <label for=\"clr-f2\">RGB</label>\n        <input id=\"clr-f3\" type=\"radio\" name=\"clr-format\" value=\"hsl\">\n        <label for=\"clr-f3\">HSL</label>\n        <span></span>\n      </fieldset>\n    </div>\n    <div id=\"clr-swatches\" class=\"clr-swatches\"></div>\n    <button type=\"button\" id=\"clr-clear\" class=\"clr-clear\" aria-label=\"").concat(settings.a11y.clear, "\">").concat(settings.clearLabel, "</button>\n    <div id=\"clr-color-preview\" class=\"clr-preview\">\n      <button type=\"button\" id=\"clr-close\" class=\"clr-close\" aria-label=\"").concat(settings.a11y.close, "\">").concat(settings.closeLabel, "</button>\n    </div>\n    <span id=\"clr-open-label\" hidden>").concat(settings.a11y.open, "</span>\n    <span id=\"clr-swatch-label\" hidden>").concat(settings.a11y.swatch, "</span>\n  ");
+  function initPickerTemplate(event) {
+    // var elem = event.target;
+    // picker = document.createElement('div');
+    // picker.setAttribute('id', 'clr-picker');
+    // picker.className = 'clr-picker';
+    // picker.innerHTML = pickerTemplate;
+    // elem.insertAdjacentElement('afterend', picker);
+
+    picker = event;
+    colorArea = getEl('clr-color-area');
+    colorMarker = getEl('clr-color-marker');
+    clearButton = getEl('clr-clear');
+    closeButton = getEl('clr-close');
+    colorPreview = getEl('clr-color-preview');
+    colorValue = getEl('clr-color-value');
+    hueSlider = getEl('clr-hue-slider');
+    hueMarker = getEl('clr-hue-marker');
+    alphaSlider = getEl('clr-alpha-slider');
+    alphaMarker = getEl('clr-alpha-marker');
+    addListener(picker, 'mousedown', function (event) {
+      picker.classList.remove('clr-keyboard-nav');
+      event.stopPropagation();
+    });
+    addListener(colorArea, 'mousedown', function (event) {
+      addListener(document, 'mousemove', moveMarker);
+    });
+    addListener(colorArea, 'touchstart', function (event) {
+      document.addEventListener('touchmove', moveMarker, {
+        passive: false
+      });
+    });
+    addListener(colorMarker, 'mousedown', function (event) {
+      addListener(document, 'mousemove', moveMarker);
+    });
+    addListener(colorMarker, 'touchstart', function (event) {
+      document.addEventListener('touchmove', moveMarker, {
+        passive: false
+      });
+    });
+    addListener(colorValue, 'change', function (event) {
+      var value = colorValue.value;
+      if (currentEl || settings.inline) {
+        var color = value === '' ? value : setColorFromStr(value);
+        pickColor(color);
+      }
+    });
+    addListener(clearButton, 'click', function (event) {
+      pickColor('');
+      closePicker();
+    });
+    addListener(closeButton, 'click', function (event) {
+      pickColor();
+      closePicker();
+    });
+    addListener(getEl('clr-format'), 'click', '.clr-format input', function (event) {
+      currentFormat = event.target.value;
+      updateColor();
+      pickColor();
+    });
+    addListener(picker, 'click', '.clr-swatches button', function (event) {
+      setColorFromStr(event.target.textContent);
+      pickColor();
+      if (settings.swatchesOnly) {
+        closePicker();
+      }
+    });
+    addListener(colorMarker, 'keydown', function (event) {
+      var movements = {
+        ArrowUp: [0, -1],
+        ArrowDown: [0, 1],
+        ArrowLeft: [-1, 0],
+        ArrowRight: [1, 0]
+      };
+      if (Object.keys(movements).includes(event.key)) {
+        moveMarkerOnKeydown.apply(void 0, _toConsumableArray(movements[event.key]));
+        event.preventDefault();
+      }
+    });
+    addListener(colorArea, 'click', moveMarker);
+    addListener(hueSlider, 'input', setHue);
+    addListener(alphaSlider, 'input', setAlpha);
+  }
 
   /**
    * Init the color picker.
@@ -1071,10 +1157,12 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     picker = document.createElement('div');
     picker.setAttribute('id', 'clr-picker');
     picker.className = 'clr-picker';
-    picker.innerHTML = "<input id=\"clr-color-value\" name=\"clr-color-value\" class=\"clr-color\" type=\"text\" value=\"\" spellcheck=\"false\" aria-label=\"".concat(settings.a11y.input, "\">") + "<div id=\"clr-color-area\" class=\"clr-gradient\" role=\"application\" aria-label=\"".concat(settings.a11y.instruction, "\">") + '<div id="clr-color-marker" class="clr-marker" tabindex="0"></div>' + '</div>' + '<div class="clr-hue">' + "<input id=\"clr-hue-slider\" name=\"clr-hue-slider\" type=\"range\" min=\"0\" max=\"360\" step=\"1\" aria-label=\"".concat(settings.a11y.hueSlider, "\">") + '<div id="clr-hue-marker"></div>' + '</div>' + '<div class="clr-alpha">' + "<input id=\"clr-alpha-slider\" name=\"clr-alpha-slider\" type=\"range\" min=\"0\" max=\"100\" step=\"1\" aria-label=\"".concat(settings.a11y.alphaSlider, "\">") + '<div id="clr-alpha-marker"></div>' + '<span></span>' + '</div>' + '<div id="clr-format" class="clr-format">' + '<fieldset class="clr-segmented">' + "<legend>".concat(settings.a11y.format, "</legend>") + '<input id="clr-f1" type="radio" name="clr-format" value="hex">' + '<label for="clr-f1">Hex</label>' + '<input id="clr-f2" type="radio" name="clr-format" value="rgb">' + '<label for="clr-f2">RGB</label>' + '<input id="clr-f3" type="radio" name="clr-format" value="hsl">' + '<label for="clr-f3">HSL</label>' + '<span></span>' + '</fieldset>' + '</div>' + '<div id="clr-swatches" class="clr-swatches"></div>' + "<button type=\"button\" id=\"clr-clear\" class=\"clr-clear\" aria-label=\"".concat(settings.a11y.clear, "\">").concat(settings.clearLabel, "</button>") + '<div id="clr-color-preview" class="clr-preview">' + "<button type=\"button\" id=\"clr-close\" class=\"clr-close\" aria-label=\"".concat(settings.a11y.close, "\">").concat(settings.closeLabel, "</button>") + '</div>' + "<span id=\"clr-open-label\" hidden>".concat(settings.a11y.open, "</span>") + "<span id=\"clr-swatch-label\" hidden>".concat(settings.a11y.swatch, "</span>");
+    picker.innerHTML = pickerTemplate;
 
     // Append the color picker to the DOM
     document.body.appendChild(picker);
+
+    //initPickerTemplate(picker);
 
     // Reference the UI elements
     colorArea = getEl('clr-color-area');
@@ -1088,12 +1176,11 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     alphaSlider = getEl('clr-alpha-slider');
     alphaMarker = getEl('clr-alpha-marker');
 
-    // Bind the picker to the default selector
+    //  Bind the picker to the default selector
     initInstances(settings.el, settings);
     bindFields(settings.el);
-    //wrapFields(settings);
-    //addButtonThumb(settings);
-
+    wrapFields(settings);
+    addButtonThumb(settings);
     addListener(picker, 'mousedown', function (event) {
       picker.classList.remove('clr-keyboard-nav');
       event.stopPropagation();
@@ -1181,6 +1268,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       }
     });
     addListener(document, 'click', '.clr-field button', function (event) {
+      //  INIT the overlay first
+      //initPickerTemplate(event);
       // Open the color picker
       if (event.target.classList.contains('clr-button')) {
         //event.target.dispatchEvent(new Event('click', { bubbles: true }));  
