@@ -461,8 +461,8 @@
           reposition.left = true;
         }
 
-        //if (top + pickerHeight - scrollY > document.documentElement.clientHeight) {
-        if (top + pickerHeight - scrollY > documentHeight) {
+        if (top + pickerHeight - scrollY > document.documentElement.clientHeight) {
+        //if (top + pickerHeight - scrollY > documentHeight) {
           if (pickerHeight + settings.margin <= coords.top) {
             top = scrollY + coords.y - pickerHeight - settings.margin;
             reposition.top = true;

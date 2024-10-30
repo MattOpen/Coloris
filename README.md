@@ -1,5 +1,5 @@
 
-# ColorisColorpicker ("0.29.0")
+# ColorisColorpicker ("0.30.0")
 
 This is a fork of the great repo from mdbassit/Coloris.
 All credits goes to Momo, he did a great job. Unfortunately he will preserve his version of Coloris and will not allow further contributions.

@@ -461,9 +461,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           left += coords.width - pickerWidth;
           reposition.left = true;
         }
-
-        //if (top + pickerHeight - scrollY > document.documentElement.clientHeight) {
-        if (top + pickerHeight - scrollY > documentHeight) {
+        if (top + pickerHeight - scrollY > document.documentElement.clientHeight) {
+          //if (top + pickerHeight - scrollY > documentHeight) {
           if (pickerHeight + settings.margin <= coords.top) {
             top = scrollY + coords.y - pickerHeight - settings.margin;
             reposition.top = true;
