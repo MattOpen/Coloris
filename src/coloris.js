@@ -71,7 +71,9 @@
       '#023e8a',
       '#023e8a',
       '#264653'
-    ]
+    ],
+    cursorOffsetX: 0,
+    cursorOffsetY: 0
   };
 
   /**
@@ -83,7 +85,8 @@
     if (typeof options !== 'object') {
       return;
     }
-    var defaultSetting = Object.assign({}, settings);
+    var defaultSetting = Object.assign({}, settings),
+        instance = options;
 
     Object.keys(options).forEach(function (item) {
       defaultSetting[item] = options[item];
@@ -126,7 +129,7 @@
 
           // Update the color picker's position if inline mode is in use
           if (defaultSetting.inline) {
-            updatePickerPosition();
+            updatePickerPosition(instance);
           }
           break;
         case 'rtl':
@@ -186,7 +189,7 @@
             //const defaultColor = options.defaultColor || defaultSetting.defaultColor;
             
             currentFormat = getColorFormatFromStr(defaultSetting.defaultColor);
-            updatePickerPosition();
+            updatePickerPosition(instance);
             setColorFromStr(defaultSetting.defaultColor);
           }
           break;
@@ -360,7 +363,7 @@
       currentFormat = getColorFormatFromStr(oldColor);
       picker.classList.add('clr-open');
       
-      updatePickerPosition();
+      updatePickerPosition(instance);
       setColorFromStr(oldColor);
 
       if (instance.focusInput || instance.selectInput) {
@@ -401,14 +404,18 @@
   /**
    * Update the color picker's position and the color gradient's offset
    */
-  function updatePickerPosition() {
+  function updatePickerPosition(instance) {
     const parent = container;
     const scrollY = window.scrollY;
     const pickerWidth = picker.offsetWidth;
     const pickerHeight = picker.offsetHeight;
     const reposition = { left: false, top: false };
+    //const instance = Coloris.instances[event.target.dataset.coloris];
+    const cursorOffsetX = instance.cursorOffsetX;
+    const cursorOffsetY = instance.cursorOffsetY;
     let parentStyle, parentMarginTop, parentBorderTop;
     let offset = { x: 0, y: 0 };
+    
 
     var documentHeight = Math.max( document.body.scrollHeight, document.body.offsetHeight, 
       document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight );
@@ -454,8 +461,8 @@
           reposition.left = true;
         }
 
-        if (top + pickerHeight - scrollY > document.documentElement.clientHeight) {
-        //if (top + pickerHeight - scrollY > documentHeight) {
+        //if (top + pickerHeight - scrollY > document.documentElement.clientHeight) {
+        if (top + pickerHeight - scrollY > documentHeight) {
           if (pickerHeight + settings.margin <= coords.top) {
             top = scrollY + coords.y - pickerHeight - settings.margin;
             reposition.top = true;
@@ -465,8 +472,8 @@
 
       picker.classList.toggle('clr-left', reposition.left);
       picker.classList.toggle('clr-top', reposition.top);
-      picker.style.left = `${left}px`;
-      picker.style.top = `${top}px`;
+      picker.style.left = `${left + cursorOffsetX}px`;
+      picker.style.top = `${top - cursorOffsetY}px`;
       offset.x += picker.offsetLeft;
       offset.y += picker.offsetTop;
     }

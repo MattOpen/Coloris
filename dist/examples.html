@@ -10,7 +10,6 @@
 
     body {
       height: 120vh;
-      margin: 30px;
       color: #444;
       background-color: #fff;
       font-family: 'Lato', sans-serif;
@@ -41,10 +40,22 @@
       top: 500px;
     }
   
+  .stickyhaeder{
+    height: 96px;
+    position: fixed;
+    width: 100%;
+    background-color: aliceblue;
+    margin: auto;
+    text-align: center;
+    z-index: 1000;
+    top: 0;
+    padding: 1rem;
+  }
 
     </style>
   </head>
   <body>
+    <header class="stickyhaeder">TEST</header>
     <a href="https://github.com/mattopen/ColorisOpen">View <b>Coloris</b> on GitHub</a>
     <h1>Coloris examples</h1>
     <div class="examples">
@@ -139,6 +150,8 @@
           '#2a9d8f',
           '#e9c46a'
         ]
+        ,
+        cursorOffsetY: -96
       });
 
       Coloris({

@@ -53,7 +53,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     colorAreaDims = {};
 
   // Default settings
-  var settings = _defineProperty({
+  var settings = _defineProperty(_defineProperty(_defineProperty({
     el: '[data-coloris]',
     parent: 'document.body',
     //parent: event.target,
@@ -93,7 +93,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       instruction: 'Saturation and brightness selector. Use up, down, left and right arrow keys to select.'
     },
     buttonStyle: 'default'
-  }, "swatches", ['#d62828', '#e76f51', '#f4a261', '#e9c46a', '#7c930a', '#bbd53a', '#92d293', '#23c826', '#54ce56', '#2a9d8f', '#0096c7', '#00b4d8', '#48cae4', '#0077b6', '#0077b6', '#023e8a', '#023e8a', '#264653']);
+  }, "swatches", ['#d62828', '#e76f51', '#f4a261', '#e9c46a', '#7c930a', '#bbd53a', '#92d293', '#23c826', '#54ce56', '#2a9d8f', '#0096c7', '#00b4d8', '#48cae4', '#0077b6', '#0077b6', '#023e8a', '#023e8a', '#264653']), "cursorOffsetX", 0), "cursorOffsetY", 0);
 
   /**
    * Configure the color picker.
@@ -104,7 +104,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     if (_typeof(options) !== 'object') {
       return;
     }
-    var defaultSetting = Object.assign({}, settings);
+    var defaultSetting = Object.assign({}, settings),
+      instance = options;
     Object.keys(options).forEach(function (item) {
       defaultSetting[item] = options[item];
     });
@@ -145,7 +146,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
 
           // Update the color picker's position if inline mode is in use
           if (defaultSetting.inline) {
-            updatePickerPosition();
+            updatePickerPosition(instance);
           }
           break;
         case 'rtl':
@@ -203,7 +204,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             //const defaultColor = options.defaultColor || defaultSetting.defaultColor;
 
             currentFormat = getColorFormatFromStr(defaultSetting.defaultColor);
-            updatePickerPosition();
+            updatePickerPosition(instance);
             setColorFromStr(defaultSetting.defaultColor);
           }
           break;
@@ -364,7 +365,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       oldColor = currentEl.value;
       currentFormat = getColorFormatFromStr(oldColor);
       picker.classList.add('clr-open');
-      updatePickerPosition();
+      updatePickerPosition(instance);
       setColorFromStr(oldColor);
       if (instance.focusInput || instance.selectInput) {
         colorValue.focus({
@@ -407,7 +408,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
   /**
    * Update the color picker's position and the color gradient's offset
    */
-  function updatePickerPosition() {
+  function updatePickerPosition(instance) {
     var parent = container;
     var scrollY = window.scrollY;
     var pickerWidth = picker.offsetWidth;
@@ -416,6 +417,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       left: false,
       top: false
     };
+    //const instance = Coloris.instances[event.target.dataset.coloris];
+    var cursorOffsetX = instance.cursorOffsetX;
+    var cursorOffsetY = instance.cursorOffsetY;
     var parentStyle, parentMarginTop, parentBorderTop;
     var offset = {
       x: 0,
@@ -457,8 +461,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           left += coords.width - pickerWidth;
           reposition.left = true;
         }
-        if (top + pickerHeight - scrollY > document.documentElement.clientHeight) {
-          //if (top + pickerHeight - scrollY > documentHeight) {
+
+        //if (top + pickerHeight - scrollY > document.documentElement.clientHeight) {
+        if (top + pickerHeight - scrollY > documentHeight) {
           if (pickerHeight + settings.margin <= coords.top) {
             top = scrollY + coords.y - pickerHeight - settings.margin;
             reposition.top = true;
@@ -467,8 +472,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       }
       picker.classList.toggle('clr-left', reposition.left);
       picker.classList.toggle('clr-top', reposition.top);
-      picker.style.left = "".concat(left, "px");
-      picker.style.top = "".concat(top, "px");
+      picker.style.left = "".concat(left + cursorOffsetX, "px");
+      picker.style.top = "".concat(top - cursorOffsetY, "px");
       offset.x += picker.offsetLeft;
       offset.y += picker.offsetTop;
     }
