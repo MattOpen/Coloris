@@ -252,6 +252,10 @@
             colorArea.setAttribute('aria-label', defaultSetting.a11y.instruction);
           }
           break;
+        case 'cursorOffsetX':
+        case 'cursorOffsetY':
+          defaultSetting[key] = options[key];
+          break;
         default:
           defaultSetting[key] = options[key];
       }
@@ -278,32 +282,47 @@
       settings[item] = options[item];
     });
 
-    var randOptions = Object.assign({}, options);
+    //const randOptions = Object.assign({}, options);
     // const unsupportedOptions = ['wrap', 'rtl', 'inline', 'defaultColor', 'a11y'];
     // // Delete unsupported options
     // unsupportedOptions.forEach(option => delete randOptions[option]);
 
     if (selector.charAt(0) === '#'){
+      var theRandOptions = Object.assign({}, options);
       var el = document.getElementById("selector");
       el.dataset.coloris = selector;
-      randOptions['domObj'] = el;
-      randOptions['colorisId'] = selector;
+      theRandOptions['domObj'] = el;
+      theRandOptions['colorisId'] = selector;
+      if(el.dataset.cursoroffsetx){
+        theRandOptions['cursorOffsetX'] = el.dataset.cursoroffsetx;  
+      }
+      if(el.dataset.cursoroffsety){
+        theRandOptions['cursorOffsetY'] = el.dataset.cursoroffsety;  
+      }
 
-      getDataConfig(el, randOptions);
+      var instance = getDataConfig(el, theRandOptions);
 
-      Coloris['instances'][selector] = Object.assign({}, randOptions);
+      Coloris['instances'][selector] = Object.assign({}, instance);
       //redrawColoris(randOptions.domObj);
     }
     else{
       document.querySelectorAll(selector).forEach(el =>{
-        randOptions['domObj'] = el;
+        var theRandOptions = Object.assign({}, options);
+
+        theRandOptions['domObj'] = el;
         var newId = el.id.length > 0 ? el.id : Math.random().toString(36).substring(2, 9);
         el.id = newId;
-        randOptions['colorisId'] = '#' + newId;
+        theRandOptions['colorisId'] = '#' + newId;
+        if(el.dataset.cursoroffsetx){
+          theRandOptions['cursorOffsetX'] = el.dataset.cursoroffsetx;  
+        }
+        if(el.dataset.cursoroffsety){
+          theRandOptions['cursorOffsetY'] = el.dataset.cursoroffsety;  
+        }
 
-        getDataConfig(el, randOptions);
+        var instance = getDataConfig(el, theRandOptions);
 
-        Coloris['instances']['#' + newId] = Object.assign({}, randOptions);
+        Coloris['instances']['#' + newId] = Object.assign({}, instance);
         el.dataset.coloris = '#' + newId;
         
         //redrawColoris(randOptions.domObj);
@@ -316,7 +335,7 @@
    * @param {Object} element Target element input
    * @param {Object} instance settings json
    */
-  function getDataConfig(element, instance){
+  function getDataConfig(element, instance, callBackFn){
     if(element.dataset.config){
       var config = element.dataset.config;
       try{
@@ -331,6 +350,7 @@
         });
       }
     }
+    return instance;
   }
 
   /**
@@ -538,6 +558,8 @@
     var instance = element,
         field = instance.domObj,
         parentNode = field.parentNode;
+
+    //console.log(instance.cursorOffsetY, instance.domObj);
     
     if (!parentNode.classList.contains('clr-wrapper') && instance.wrap) {
   
@@ -585,12 +607,6 @@
         const instance = instancesObjArr[key];
         if(!instance.showButtonThumb) return;
 
-        //  add local settinigs
-        if(typeof(element) == 'object'){
-          Object.keys(element).forEach(function (item) {
-            instance[item] = element[item];
-          });
-        }
         addButtonThumbOne(instance);
       }
     }
@@ -1251,7 +1267,7 @@
     //  Bind the picker to the default selector
     initInstances(settings.el, settings);
     bindFields(settings.el);
-    wrapFields(settings);
+    //wrapFields(settings);
     addButtonThumb(settings);
 
     addListener(picker, 'mousedown', event => {
@@ -1470,7 +1486,7 @@
 
     function Coloris(options) {
       if(!options) options = {};
-      
+
       if(!Coloris.instances){
         var args = args !== undefined ? args : [];
         init(...args);

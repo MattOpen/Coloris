@@ -262,6 +262,10 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             colorArea.setAttribute('aria-label', defaultSetting.a11y.instruction);
           }
           break;
+        case 'cursorOffsetX':
+        case 'cursorOffsetY':
+          defaultSetting[key] = options[key];
+          break;
         default:
           defaultSetting[key] = options[key];
       }
@@ -288,27 +292,42 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     Object.keys(options).forEach(function (item) {
       settings[item] = options[item];
     });
-    var randOptions = Object.assign({}, options);
+
+    //const randOptions = Object.assign({}, options);
     // const unsupportedOptions = ['wrap', 'rtl', 'inline', 'defaultColor', 'a11y'];
     // // Delete unsupported options
     // unsupportedOptions.forEach(option => delete randOptions[option]);
 
     if (selector.charAt(0) === '#') {
+      var theRandOptions = Object.assign({}, options);
       var el = document.getElementById("selector");
       el.dataset.coloris = selector;
-      randOptions['domObj'] = el;
-      randOptions['colorisId'] = selector;
-      getDataConfig(el, randOptions);
-      Coloris['instances'][selector] = Object.assign({}, randOptions);
+      theRandOptions['domObj'] = el;
+      theRandOptions['colorisId'] = selector;
+      if (el.dataset.cursoroffsetx) {
+        theRandOptions['cursorOffsetX'] = el.dataset.cursoroffsetx;
+      }
+      if (el.dataset.cursoroffsety) {
+        theRandOptions['cursorOffsetY'] = el.dataset.cursoroffsety;
+      }
+      var instance = getDataConfig(el, theRandOptions);
+      Coloris['instances'][selector] = Object.assign({}, instance);
       //redrawColoris(randOptions.domObj);
     } else {
       document.querySelectorAll(selector).forEach(function (el) {
-        randOptions['domObj'] = el;
+        var theRandOptions = Object.assign({}, options);
+        theRandOptions['domObj'] = el;
         var newId = el.id.length > 0 ? el.id : Math.random().toString(36).substring(2, 9);
         el.id = newId;
-        randOptions['colorisId'] = '#' + newId;
-        getDataConfig(el, randOptions);
-        Coloris['instances']['#' + newId] = Object.assign({}, randOptions);
+        theRandOptions['colorisId'] = '#' + newId;
+        if (el.dataset.cursoroffsetx) {
+          theRandOptions['cursorOffsetX'] = el.dataset.cursoroffsetx;
+        }
+        if (el.dataset.cursoroffsety) {
+          theRandOptions['cursorOffsetY'] = el.dataset.cursoroffsety;
+        }
+        var instance = getDataConfig(el, theRandOptions);
+        Coloris['instances']['#' + newId] = Object.assign({}, instance);
         el.dataset.coloris = '#' + newId;
 
         //redrawColoris(randOptions.domObj);
@@ -321,7 +340,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
    * @param {Object} element Target element input
    * @param {Object} instance settings json
    */
-  function getDataConfig(element, instance) {
+  function getDataConfig(element, instance, callBackFn) {
     if (element.dataset.config) {
       var config = element.dataset.config;
       try {
@@ -335,6 +354,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         });
       }
     }
+    return instance;
   }
 
   /**
@@ -531,6 +551,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     var instance = element,
       field = instance.domObj,
       parentNode = field.parentNode;
+
+    //console.log(instance.cursorOffsetY, instance.domObj);
+
     if (!parentNode.classList.contains('clr-wrapper') && instance.wrap) {
       var wrapper = document.createElement('div');
       var classes = 'clr-field clr-wrapper';
@@ -567,26 +590,12 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
   */
   function addButtonThumb(element) {
     var instancesObjArr = getRelatedInstances(element);
-    var _loop2 = function _loop2() {
-        if (instancesObjArr.hasOwnProperty(key)) {
-          var instance = instancesObjArr[key];
-          if (!instance.showButtonThumb) return {
-            v: void 0
-          };
-
-          //  add local settinigs
-          if (_typeof(element) == 'object') {
-            Object.keys(element).forEach(function (item) {
-              instance[item] = element[item];
-            });
-          }
-          addButtonThumbOne(instance);
-        }
-      },
-      _ret;
     for (var key in instancesObjArr) {
-      _ret = _loop2();
-      if (_ret) return _ret.v;
+      if (instancesObjArr.hasOwnProperty(key)) {
+        var instance = instancesObjArr[key];
+        if (!instance.showButtonThumb) return;
+        addButtonThumbOne(instance);
+      }
     }
   }
 
@@ -1183,7 +1192,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     //  Bind the picker to the default selector
     initInstances(settings.el, settings);
     bindFields(settings.el);
-    wrapFields(settings);
+    //wrapFields(settings);
     addButtonThumb(settings);
     addListener(picker, 'mousedown', function (event) {
       picker.classList.remove('clr-keyboard-nav');
@@ -1395,7 +1404,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         wrapFields(options);
       }
     }
-    var _loop3 = function _loop3(key) {
+    var _loop2 = function _loop2(key) {
       Coloris[key] = function () {
         for (var _len = arguments.length, args = new Array(_len), _key2 = 0; _key2 < _len; _key2++) {
           args[_key2] = arguments[_key2];
@@ -1404,7 +1413,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       };
     };
     for (var key in methods) {
-      _loop3(key);
+      _loop2(key);
     }
     return Coloris;
   }();

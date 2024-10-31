@@ -73,7 +73,7 @@
       </div>
       <div class="example full">
         <p>Full size thumbnail</p>
-        <input type="text" class="instance3" data-coloris value="#ffcc00">
+        <input type="text" class="instance3" data-coloris value="#ffcc00" data-cursoroffsety="-96">
       </div>
       <div class="example square">
         <p>Wrapped with div</p>
@@ -125,7 +125,8 @@
         themeMode: 'dark',
         theme: 'default',
         wrap: true,
-        showButtonThumb: true
+        showButtonThumb: true,
+        cursorOffsetY: "96"
       });
 
       Coloris({
@@ -149,9 +150,8 @@
           '#264653',
           '#2a9d8f',
           '#e9c46a'
-        ]
-        ,
-        cursorOffsetY: -96
+        ],
+        //cursorOffsetY: -96
       });
 
       Coloris({
